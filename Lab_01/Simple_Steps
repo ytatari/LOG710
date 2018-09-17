@@ -1,0 +1,7 @@
+S'il n'y a pas de fichier executable, commencer par ecrire ceci dans un Terminal:
+
+	1- gcc -o RunCmd RunCmd.c
+
+Si l'executable existe deja, poursuivre:
+
+	2- ./RunCmd ls -al /usr/src
