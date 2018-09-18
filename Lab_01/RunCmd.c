@@ -24,6 +24,9 @@
  *					MAIN - Demarrer l'execution
  ***************************************************************/
 int main (int argc, char* argv[]) {
+
+	//Affiche la commande entrée
+	//entrerCommande(argv);
 	
 	//Arret de l'execution si aucunes commandes n'est entrées
 	if (argc <= 1){ erreurCommande(); }
@@ -54,6 +57,17 @@ int main (int argc, char* argv[]) {
 }
 
 /***************************************************************
+ *					Terminal - Afficher commande
+ ***************************************************************/
+// void entrerCommande(char* argv[]){
+
+// 	printf("\nCommande entrée: ");
+
+// 	for(int i = 0; argv[i] != '\0'; i++)
+//         printf(" %s", argv[i]);
+// }
+
+/***************************************************************
  *					Erreur - Aucune commande
  ***************************************************************/
 void erreurCommande(){
@@ -63,7 +77,6 @@ void erreurCommande(){
 	printf("**************************************\n\n");
 	abort();
 	exit(0);
-
 }
 
 /***************************************************************
@@ -85,7 +98,8 @@ void erreurFork(){
 void processusFils(char* argv[]){
 
 	//A faire...
-	printf("FILS, id = %d\n");
+	//execvp(argv[1], )
+	printf("\n\nFILS, id = %d\n");
 	printf("l'argument est %d\n", argv[3]);
 }
 
@@ -95,7 +109,7 @@ void processusFils(char* argv[]){
 void processusParent(int pid, int argc){
 
 	//A faire...
-	printf("PARENT, pid = %d\n");
+	printf("\n\nPARENT, pid = %d\n");
 	printf("le id de mon fils = %d\n", pid);
 	printf("toto %d\n", argc);
 }
