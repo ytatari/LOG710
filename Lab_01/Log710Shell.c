@@ -65,6 +65,7 @@ do {
 	}
 	else if (pid == 0){
 		//printf("Le pid du fils : %d et le père : %d\n", getpid(), getppid());
+
 		if (execvp(arg[0], arg) == -1) {
 			printf("Bad command-line arguments\n");
 		}				

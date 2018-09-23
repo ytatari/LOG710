@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/resource.h>
 
 /***************************************************************
  *	Titre:			RunCmd
@@ -25,58 +26,55 @@
  ***************************************************************/
 int main (int argc, char* argv[]) {
 
-	//Affiche la commande entrée
-	//entrerCommande(argv);
+	//Initialise le Package ID
+	pid_t pid = fork(); 
 	
-	//Arret de l'execution si aucunes commandes n'est entrées
-	if (argc <= 1){ erreurCommande(); }
+	//Arret de l'execution si aucunes commandes n'est entrées.
+	if (argc <= 1){ erreurCommande(argv); }
 
-	//Packet Identifier
-	int pid = fork();
+	//Arret de l'execution si on retrouve une erreur de fork.
+	if (pid <= -1){ erreurFork(); }
 
-	switch(pid) {
+	//Processus Fils
+	if (pid == 0){ processusEnfant(argv); }
 
-		//Erreur fork
-		case -1:
-			erreurFork();
-		break;
+	//Processus Parent
+	if (pid > 0){ processusParent(pid, argv); }
 
-		//Processus Fils
-		case 0:
-			processusFils(argv);
-		break;
-
-		//Processus Parent
-		default:
-			processusParent(pid, argc);
-		break;
-	}	
-
-	//Réussite de l'execution de la commande
+	//Réussite de l'execution
 	return 0;
 }
 
 /***************************************************************
- *					Terminal - Afficher commande
+ *					Erreur - Aucunes commandes
  ***************************************************************/
-// void entrerCommande(char* argv[]){
+void erreurCommande(char* argv[]){
 
-// 	printf("\nCommande entrée: ");
+	printf("\n\n***************** ERREUR ******************\n");
+	printf("*   Veuillez entrer une commande valide   *\n");
+	printf("*******************************************\n");
+	printf("*\n");
 
-// 	for(int i = 0; argv[i] != '\0'; i++)
-//         printf(" %s", argv[i]);
-// }
+	//Affiche commande entrée
+	entrerCommande(argv);
 
-/***************************************************************
- *					Erreur - Aucune commande
- ***************************************************************/
-void erreurCommande(){
-
-	printf("\n*************** ERREUR ***************\n");
-	printf("*   Vous devez entrer une commande   *\n");
-	printf("**************************************\n\n");
 	abort();
 	exit(0);
+}
+
+/***************************************************************
+ *					Terminal - Afficher la commande
+ ***************************************************************/
+void entrerCommande(char* argv[]){
+
+	printf("* Commande : ");
+
+	//Affiche entièrement la commande entrée
+	for(int i = 0; argv[i] != '\0'; i++){
+        printf(" %s", argv[i]);
+	}
+
+	printf("\n");
 }
 
 /***************************************************************
@@ -84,54 +82,94 @@ void erreurCommande(){
  ***************************************************************/
 void erreurFork(){
 
-	printf("\n*************** ERREUR ***************\n");
-	printf("*  Duplication processus impossible  *\n");
-	printf("*        Voir fonction fork()        *\n");
-	printf("**************************************\n\n");
+	printf("\n\n****************** ERREUR *****************\n");
+	printf("*     Duplication processus impossible    *\n");
+	printf("*           Voir fonction fork()          *\n");
+	printf("*******************************************\n");
 	abort();
 	exit(0);
 }
 
 /***************************************************************
- *						Processus - Fils
+ *						Processus - Enfant
  ***************************************************************/
-void processusFils(char* argv[]){
+void processusEnfant(char* argv[]){
 
-	//A faire...
-	//execvp(argv[1], )
-	printf("\n\nFILS, id = %d\n");
-	printf("l'argument est %d\n", argv[3]);
+	//Affiche l'information du repertoire selon la commande entrée
+	execvp(argv[1], &argv[1]);
+	
+	//Arrêt de l'execution si la commande est inconnu
+	erreurCommande(argv);
+	abort();
+	exit(0);	
 }
 
 /***************************************************************
  *						Processus - parent
  ***************************************************************/
-void processusParent(int pid, int argc){
+void processusParent(int pid, char* argv[]){
 
-	//A faire...
-	printf("\n\nPARENT, pid = %d\n");
-	printf("le id de mon fils = %d\n", pid);
-	printf("toto %d\n", argc);
+	int rUsage = 1;
+	int wallClockTime = 1;
+	struct rusage usage;
+	struct timeval start;
+	struct timeval timeOfDayStart, timeOfDayEnd;
+
+
+	if (getrusage(RUSAGE_SELF, &usage) == 0) {
+		start = usage.ru_stime;
+	}
+
+	//Temporel: démarrer
+	gettimeofday(&timeOfDayStart, NULL);	
+	gettimeofday(&start, NULL);
+
+	//Attend le Package ID avant de continuer
+	wait(pid);
+	
+	//Temporel: arrêt 
+	wallClockTime = gettimeofday(&timeOfDayEnd, NULL);
+	rUsage = getrusage(RUSAGE_SELF,&usage);
+
+	//Calcul et affichage des resultats obtenus de la commande entrée
+	afficherStats(pid, argv, usage, wallClockTime, rUsage, timeOfDayStart, timeOfDayEnd);
 }
 
+/***************************************************************
+ *				Terminal - Afficher Statistiques
+ ***************************************************************/
+void afficherStats(int pid, char* argv[], struct rusage usage, int wallClockTime, int rUsage, struct timeval timeOfDayStart, struct timeval timeOfDayEnd){
 
+	float timeUsed;
+	float timeCPU;
 
-/*
-	if (pid < 0){
-
-		printf("fork(): %c\n", argv[1]);
-		return 1;
+	//Calcul du temps d'execution de la commande
+	if ( wallClockTime == 0) {
+		timeUsed = (((float)timeOfDayEnd.tv_sec - (float)timeOfDayStart.tv_sec) * 1000) + 
+				   (((float)timeOfDayEnd.tv_usec - (float)timeOfDayStart.tv_usec) / 1000);
 	}
-	else if (pid) {
 
-		printf("PARENT, pid = %d\n");
-		printf("le id de mon fils = %d\n", pid);
-		printf("toto %d\n", argc);
+	//Calcul du temps d'execution du CPU
+	if ( rUsage == 0) {
+		timeCPU = ((float)usage.ru_stime.tv_sec * (long)1000) + 
+				  ((float)usage.ru_stime.tv_usec / (long)1000);
 	}
-	else {
-
-		printf("FILS, id = %d\n");
-		printf("l'argument est %d\n", argv[3]);
-		return 1;
-	}
-*/
+	
+	printf("\n\n***************** STATISTIQUES ******************\n");
+	printf("*\n");
+	entrerCommande(argv);
+	printf("*\n");
+	printf("* PID Parent : %d\n", getpid());
+	printf("* PID Enfant : %d\n", pid);
+	printf("*\n");
+	printf("* Time exec. : %f ms\n", timeUsed);	
+	printf("* Time CPU :   %f ms\n", timeCPU);
+	printf("*\n");
+	printf("* Involuntary interruption : %ld\n", usage.ru_nivcsw);
+	printf("* Voluntary interruption :   %ld\n", usage.ru_nvcsw);
+	printf("*\n");
+	printf("* Page faults :   %ld\n", usage.ru_majflt);
+	printf("* Page reclaims : %ld\n", usage.ru_minflt);
+	printf("*\n");
+	printf("**************************************************\n\n");
+}
