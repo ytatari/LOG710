@@ -95,6 +95,8 @@ void erreurFork(){
  ***************************************************************/
 void processusEnfant(char* argv[]){
 
+	printf("\n\n");
+
 	//Affiche l'information du repertoire selon la commande entrée
 	execvp(argv[1], &argv[1]);
 	
@@ -171,5 +173,5 @@ void afficherStats(int pid, char* argv[], struct rusage usage, int wallClockTime
 	printf("* Page faults :   %ld\n", usage.ru_majflt);
 	printf("* Page reclaims : %ld\n", usage.ru_minflt);
 	printf("*\n");
-	printf("**************************************************\n\n");
+	printf("*************************************************\n\n");
 }
