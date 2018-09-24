@@ -36,10 +36,10 @@ int main (int argc, char* argv[]) {
 	if (pid <= -1){ erreurFork(); }
 
 	//Processus Fils
-	if (pid == 0){ processusEnfant(argv); }
+	else if (pid == 0){ processusEnfant(argv); }
 
 	//Processus Parent
-	if (pid > 0){ processusParent(pid, argv); }
+	else if (pid > 0){ processusParent(pid, argv); }
 
 	//Réussite de l'execution
 	return 0;
