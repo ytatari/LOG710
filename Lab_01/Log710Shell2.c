@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <unistd.h>
 #include <errno.h>
+#include <ctype.h>
 #include <pthread.h>
 #include <sys/time.h>
 #include <sys/resource.h>
@@ -22,11 +23,11 @@ struct thread_info {
 void *threadFunction (void* thread_argument) {
 	struct thread_info *info = thread_argument;
 
-	printf("Thread %d: top of the stack near %p; argv_string=%s\n", 
-		info->thread_num, &p, info->argv_string);
+	printf("Thread %d: argv_string=%s\n", 
+		info->thread_num, info->argv_string);
 	sleep(5);
 	
-	//printf("arguments : %s %s %s %s\n", arg[0], arg[1], arg[2], arg[3]);
+	printf("arguments : %s %s %s %s\n", arg[0], arg[1], arg[2], arg[3]);
 	execvp(arg[0], arg);
 	fflush(stdout);
 	
@@ -35,10 +36,6 @@ void *threadFunction (void* thread_argument) {
 int main (int argc, char* argv[]) {
 
 pid_t pid;
-//char *str[60];
-//char *arg[4];
-//int len;
-//bool exitCmd = 0;
 
 do {
 
@@ -51,33 +48,6 @@ do {
 
 	toto();
 
-	//printf("Log710Shell%>");
-
-	//if(fgets(str, 60, stdin) !=  NULL)
-	//{
-	//	len = strlen(str); 
-	//	if(len > 0 && str[len-1] == '\n') {
-	//		str[len-1] = '\0';
-	//	}
-//
-//		arg[0] = strtok(str," \n");
-//		i = 0;
-//						
-//		while (arg[i] != NULL)
-//		{
-//			i = i + 1;
-//			arg[i] = strtok (NULL, " \n");	
-//		}
-	//}
-
-//	if(strcmp(arg[0], "exit") == 0)
-//	{					
-//		exitCmd = 1;
-//		exit(0);				
-//	} else if (strcmp(arg[0], "cd") == 0) {
-//		chdir(arg[1]);	
-//	}
-
 	//if (getrusage(RUSAGE_SELF,&usage) == 0) {
 	//	start = usage.ru_stime;
 	//}
@@ -85,8 +55,6 @@ do {
 	//gettimeofday(&timeOfDayStart, NULL);
 
 	pid = fork();
-	//char *command;
-	//thread_t* thTab[];
 			
 	if (pid < 0) {
 		printf("Erreur de fork.\n");
@@ -95,36 +63,40 @@ do {
 	else if (pid == 0){
 		printf("Le pid du fils : %d et le père : %d\n", getpid(), getppid());
 		int tempo = 0;
-		int intThread = 0;
-		pthread_t th[10];
+		int intThread;
+		struct thread_info *th;
 
-		for (intThread = 0; intThread < 10; intThread++) {
-			if (strcmp(arg[i - 1], "&") != 0) {
-				execvp(arg[0], arg);
-				toto();
-				break;
-			}
-			//printf("Dans le Do : %d\n", tempo);
+		/*Allocate memory for pthread_create()*/
+		th = calloc(10, sizeof(struct thread_info));
+
+		/*ACreate thread*/	
+		for (intThread = 0; intThread < 2; intThread++) {
+			
+			//if (strcmp(arg[i - 1], "&") != 0) {
+		//		execvp(arg[0], arg);
+	//			toto();
+		//		break;
+		//	}
+
 			tempo = 1;
 			if (strcmp(arg[i - 1], "&") == 0) 
 			{
+				th[intThread].thread_num = intThread + 1;
+				//th[intThread].argv_string = arg;
 				
 				printf("Valeur de intThread : %d\n", intThread);
 				arg[i - 1] = NULL;
-				//printf("arguments : %s %s %s %s\n", arg[0], arg[1], arg[2], arg[3]);
-				//printf("%d\n", i);
-			
-				pthread_create(&th[intThread], NULL, threadFunction, &th[intThread]);
-				//sleep(10);
-				//pthread_create(&th[intThread + 1], NULL, threadA, 1);
-				//intThread = intThread + 1;
-				//arg[i - 1] = "";
+
+				pthread_create(&th[intThread].thread_id, NULL, threadFunction, &th[intThread]);
+
+				//if (intThread > 0 ) {
+					pthread_join(th[intThread].thread_id, NULL);
+				//}
 				printf("%s\n", "Je suis là");
 				toto();
 				//printf("arguments : %s %s %s %s\n", arg[0], arg[1], arg[2], arg[3]);
 				//printf("Le i vaut : %d\n", i);
 				if (strcmp(arg[i - 1], "&") != 0) {
-					//printf("Dans le If : %d\n", tempo);
 					tempo = 0;
 				}
 			}

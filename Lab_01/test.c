@@ -24,7 +24,8 @@ void *threadA(void *thread_argument) {
 	sleep(10);
 	int i  = (int)thread_argument;
 	printf("arguments : %s %s %s %s %d\n", arg[0], arg[1], arg[2], arg[3], i);
-	execvp(arg[0], arg);
+	int s = execvp(arg[0], arg);
+	printf("%d\n", s);
 	//fflush(stdout);
 	
 }
@@ -47,37 +48,6 @@ do {
 	
 
 	toto();
-
-	//printf("Log710Shell%>");
-
-	//if(fgets(str, 60, stdin) !=  NULL)
-	//{
-	//	len = strlen(str); 
-	//	if(len > 0 && str[len-1] == '\n') {
-	//		str[len-1] = '\0';
-	//	}
-//
-//		arg[0] = strtok(str," \n");
-//		i = 0;
-//						
-//		while (arg[i] != NULL)
-//		{
-//			i = i + 1;
-//			arg[i] = strtok (NULL, " \n");	
-//		}
-	//}
-
-//	if(strcmp(arg[0], "exit") == 0)
-//	{					
-//		exitCmd = 1;
-//		exit(0);				
-//	} else if (strcmp(arg[0], "cd") == 0) {
-//		chdir(arg[1]);	
-//	}
-
-	//if (getrusage(RUSAGE_SELF,&usage) == 0) {
-	//	start = usage.ru_stime;
-	//}
 
 	//gettimeofday(&timeOfDayStart, NULL);
 	if (pipe(fd) == -1) {
@@ -141,28 +111,7 @@ do {
 		write(fd[WRITE_END], write_msg, strlen(write_msg) + 1);
 		close(fd[WRITE_END]);
 		wait(&pid);
-		
-		//wallClockTimeInt = gettimeofday(&timeOfDayEnd, NULL);
-		//rUsageInt = getrusage(RUSAGE_SELF,&usage);
 	}
-
-	//if ( wallClockTimeInt == 0) {
-	//	float response = (((float)timeOfDayEnd.tv_sec - (float)timeOfDayStart.tv_sec) * 1000) 
-	//		+ (((float)timeOfDayEnd.tv_usec - (float)timeOfDayStart.tv_usec) / 1000);
-		//printf("==========================Statistics==========================\n");
-		//printf("Time used : %fms\n", response);
-	//}
-
-	//if ( rUsageInt == 0) {
-	//	end = usage.ru_stime;
-		//float response = ((float)end.tv_sec - (float)start.tv_sec * 1000) + (((float)end.tv_usec - 
-		//	(float)start.tv_usec) / 1000);
-		//printf("System CPU time used : %fms\n", response);
-		//printf("Involontary context switches : %ld\n", usage.ru_nivcsw);
-		//printf("Volontary context switches : %ld\n", usage.ru_nvcsw);
-		//printf("Page fault serviced that required I/O activity : %ld\n", usage.ru_majflt);
-		//printf("Page fault serviced without any I/O activity : %ld\n", usage.ru_minflt);
-	//}
 
 } while (exitCmd == 0);
 
