@@ -13,10 +13,20 @@ char *str[60];
 char *arg[5];
 int i;
 
-void *threadA (void *thread_argument) {
+struct thread_info {
+	pthread_t thread_id;
+	int thread_num;
+	char *argv_string;
+};
+
+void *threadFunction (void* thread_argument) {
+	struct thread_info *info = thread_argument;
+
+	printf("Thread %d: top of the stack near %p; argv_string=%s\n", 
+		info->thread_num, &p, info->argv_string);
 	sleep(5);
-	//int i  = (int)thread_argument;
-	printf("arguments : %s %s %s %s %d\n", arg[0], arg[1], arg[2], arg[3], i);
+	
+	//printf("arguments : %s %s %s %s\n", arg[0], arg[1], arg[2], arg[3]);
 	execvp(arg[0], arg);
 	fflush(stdout);
 	
@@ -80,7 +90,7 @@ do {
 			
 	if (pid < 0) {
 		printf("Erreur de fork.\n");
-	q	return 1;
+		return 1;
 	}
 	else if (pid == 0){
 		printf("Le pid du fils : %d et le père : %d\n", getpid(), getppid());
@@ -104,9 +114,9 @@ do {
 				//printf("arguments : %s %s %s %s\n", arg[0], arg[1], arg[2], arg[3]);
 				//printf("%d\n", i);
 			
-				pthread_create(&th[intThread], NULL, threadA, 1);
+				pthread_create(&th[intThread], NULL, threadFunction, &th[intThread]);
 				//sleep(10);
-				pthread_create(&th[intThread + 1], NULL, threadA, 1);
+				//pthread_create(&th[intThread + 1], NULL, threadA, 1);
 				//intThread = intThread + 1;
 				//arg[i - 1] = "";
 				printf("%s\n", "Je suis là");
