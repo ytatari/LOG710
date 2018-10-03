@@ -20,13 +20,11 @@
  *
  ***************************************************************/
 
-
 /***************************************************************
  *					MAIN - Demarrer l'execution
  ***************************************************************/
 int main (int argc, char* argv[]) {
 
-	//Initialise le Package ID
 	pid_t pid = fork(); 
 	
 	//Arret de l'execution si aucunes commandes n'est entrées.
@@ -87,7 +85,7 @@ void erreurFork(){
 	printf("*           Voir fonction fork()          *\n");
 	printf("*******************************************\n");
 	abort();
-	exit(0);
+	exit(1);
 }
 
 /***************************************************************
@@ -103,7 +101,7 @@ void processusEnfant(char* argv[]){
 	//Arrêt de l'execution si la commande est inconnu
 	erreurCommande(argv);
 	abort();
-	exit(0);	
+	exit(1);	
 }
 
 /***************************************************************
@@ -115,26 +113,23 @@ void processusParent(int pid, char* argv[]){
 	int wallClockTime = 1;
 	struct rusage usage;
 	struct timeval start;
-	struct timeval timeOfDayStart, timeOfDayEnd;
-
-
-	if (getrusage(RUSAGE_SELF, &usage) == 0) {
-		start = usage.ru_stime;
-	}
+	struct timeval timeOfDayEnd, timeOfDayStart;
 
 	//Temporel: démarrer
-	gettimeofday(&timeOfDayStart, NULL);	
-	gettimeofday(&start, NULL);
+	gettimeofday(&timeOfDayStart, NULL);
 
-	//Attend le Package ID avant de continuer
+	//Attend le Processus fils avant de continuer
 	wait(pid);
+
+	rUsage = getrusage(RUSAGE_CHILDREN,&usage);
 	
 	//Temporel: arrêt 
 	wallClockTime = gettimeofday(&timeOfDayEnd, NULL);
-	rUsage = getrusage(RUSAGE_SELF,&usage);
 
 	//Calcul et affichage des resultats obtenus de la commande entrée
 	afficherStats(pid, argv, usage, wallClockTime, rUsage, timeOfDayStart, timeOfDayEnd);
+
+	exit(0);
 }
 
 /***************************************************************

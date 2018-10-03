@@ -1,166 +1,263 @@
+#include <signal.h>
 #include <stdio.h>
+#include <unistd.h>
+#include <wait.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include <unistd.h>
 #include <errno.h>
 #include <ctype.h>
 #include <pthread.h>
 #include <sys/time.h>
 #include <sys/resource.h>
 
-bool exitCmd = 0;
-char *str[60];
-char *arg[5];
+/***************************************************************
+ *	Titre:			RunCmd
+ *
+ *	Description:	Troisième partie du laboratoire.
+ *					Execution d'une commande pour accéder à
+ *					un interpréteur de commande shell pour 
+ *					finalement afficher des statistiques 
+ *					relatives a l'execution.
+ *					Execution d'une commande en arrière plan.
+ *			
+ *		
+ *	Etudiants:		Alexandre Laroche
+ *					Tiahiti Caspar
+ *
+ *	Cours:			LOG710
+ *	Institution:	ETS
+ *	
+ *	Date:			02 octobre 2018
+ *
+ ***************************************************************/
+
+typedef struct
+{
+	int _task;
+	int _pid;
+	char _cmd[];
+} Commande;
+
+Commande cmd[100];
+
 int i;
+pid_t pid;
+char *arg[5];
+int task = 1;
+char *str[60];
+int retourTraitement = 0;
+int positionAjoutTache = 0;
+struct timeval timeOfDayStart;
 
-struct thread_info {
-	pthread_t thread_id;
-	int thread_num;
-	char *argv_string;
-};
+/***************************************************************
+ *					Handler - Gestion des signaux
+ ***************************************************************/
+void handler(int sig)
+{
+	int pid;
 
-void *threadFunction (void* thread_argument) {
-	struct thread_info *info = thread_argument;
-
-	printf("Thread %d: argv_string=%s\n", 
-		info->thread_num, info->argv_string);
-	sleep(5);
-	
-	printf("arguments : %s %s %s %s\n", arg[0], arg[1], arg[2], arg[3]);
-	execvp(arg[0], arg);
-	fflush(stdout);
-	
+	switch(sig)
+	{
+		case SIGUSR1:break;
+		
+		case SIGUSR2:break;
+		
+		case SIGCHLD:
+			pid = wait(NULL);
+			int positionRetraitTache = 0;
+			for (positionRetraitTache; positionRetraitTache < 100; positionRetraitTache++) {
+				if (cmd[positionRetraitTache]._pid == pid) {
+					cmd[positionRetraitTache - 1]._task = NULL;
+					cmd[positionRetraitTache]._pid = NULL;
+					positionRetraitTache = positionRetraitTache + 2;
+					break;
+				}	
+			} 
+			break;
+			
+		default:break;
+	}
 }
 
-int main (int argc, char* argv[]) {
-
-pid_t pid;
-
-do {
-
-	struct rusage usage;
-	struct timeval start, end;
-	struct timeval timeOfDayStart, timeOfDayEnd;
-	int rUsageInt = 1;
-	int wallClockTimeInt = 1;
+/***************************************************************
+ *					MAIN - Demarrer l'execution
+ ***************************************************************/
+int main(int argc, char* argv[])
+{
+	int etat;
 	
+	struct sigaction action;
+	action.sa_handler = handler;
+	sigemptyset (&action.sa_mask);
+	action.sa_flags = 0;
 
-	toto();
+	if(sigaction(SIGUSR1,&action,NULL) < 0)
+		printf("Erreur de traitement de code de l'action\n");
+	if(sigaction(SIGUSR2,&action,NULL) < 0)
+		printf("Erreur de traitement de code de l'action\n");
+	if(sigaction(SIGCHLD,&action,NULL) < 0)
+		printf("Erreur de traitement de code de l'action\n");
 
-	//if (getrusage(RUSAGE_SELF,&usage) == 0) {
-	//	start = usage.ru_stime;
-	//}
+	do {
+		
+		printf("Log710Shell%>");
+		int retourTraitement = traitementEntree(); 
+		
+		if (retourTraitement == 1)
+		{
+			if(strcmp(arg[0], "exit") == 0){
+				int p = 0;
+				bool sortie = 1;
+				do {
+					if (cmd[p]._task < 30 && cmd[p]._task != 0) {
+						printf("Processus en cours ...\n");
+						sortie = 0;
+					}
+					p = p + 3;
+				} while (p < 100);
 
-	//gettimeofday(&timeOfDayStart, NULL);
+				if (sortie == 1) exit(0);				
+			} 
+			else if (strcmp(arg[0], "cd") == 0) {
+				chdir(arg[1]);	
+			}	
+			else if(strcmp(arg[0], "ap") == 0) {
+				int p = 0;
+				do {
+					if (cmd[p]._task < 30 && cmd[p]._task != 0) {
+						printf("[%d] %d %s\n", cmd[p]._task, cmd[p+1]._pid, cmd[p+2]._cmd);
+					}
+					p = p + 3;
+				} while (p < 100);
+			}
+			else {
 
-	pid = fork();
-			
-	if (pid < 0) {
-		printf("Erreur de fork.\n");
-		return 1;
-	}
-	else if (pid == 0){
-		printf("Le pid du fils : %d et le père : %d\n", getpid(), getppid());
-		int tempo = 0;
-		int intThread;
-		struct thread_info *th;
+				pid = fork(); 
 
-		/*Allocate memory for pthread_create()*/
-		th = calloc(10, sizeof(struct thread_info));
+				if( pid == 0)
+				{
+					//printf("Le pid du fils : %d et le père : %d\n", getpid(), getppid());	
+					kill(getppid(),SIGUSR2);
 
-		/*ACreate thread*/	
-		for (intThread = 0; intThread < 2; intThread++) {
-			
-			//if (strcmp(arg[i - 1], "&") != 0) {
-		//		execvp(arg[0], arg);
-	//			toto();
-		//		break;
-		//	}
+					if (strcmp(arg[i - 1], "&") != 0){
+						retourTraitement = 0;
+						execvp(arg[0], arg);
+					}
+					else {
+						arg[i - 1] = NULL;
+						//Simulation d'une commande en arrière plan
+						//sleep(10);
+						execvp(arg[0], arg);
+					}
+					printf("Erreur d'exécution\n");
+					abort();
+					exit(1);
+				} 
+				else if (pid > 0)
+				{
+					//printf("Le pid du père : %d et le fils : %d\n", getpid(), pid);
+					kill(pid,SIGUSR1);
+					
+					if (strcmp(arg[i - 1], "&") != 0) {
+						pause();
+						int rUsage = 1;
+						int wallClockTime = 1;
+						struct rusage usage;
+						struct timeval timeOfDayEnd;
 
-			tempo = 1;
-			if (strcmp(arg[i - 1], "&") == 0) 
-			{
-				th[intThread].thread_num = intThread + 1;
-				//th[intThread].argv_string = arg;
-				
-				printf("Valeur de intThread : %d\n", intThread);
-				arg[i - 1] = NULL;
+						gettimeofday(&timeOfDayStart, NULL);
 
-				pthread_create(&th[intThread].thread_id, NULL, threadFunction, &th[intThread]);
+						wait(pid);
+						
+						rUsage = getrusage(RUSAGE_SELF,&usage);
+						
+						wallClockTime = gettimeofday(&timeOfDayEnd, NULL);
+						
+						afficherStats(pid, usage, wallClockTime, rUsage, timeOfDayStart, timeOfDayEnd);
 
-				//if (intThread > 0 ) {
-					pthread_join(th[intThread].thread_id, NULL);
-				//}
-				printf("%s\n", "Je suis là");
-				toto();
-				//printf("arguments : %s %s %s %s\n", arg[0], arg[1], arg[2], arg[3]);
-				//printf("Le i vaut : %d\n", i);
-				if (strcmp(arg[i - 1], "&") != 0) {
-					tempo = 0;
+					} else {
+						cmd[positionAjoutTache]._task = task;
+						cmd[positionAjoutTache+1]._pid = pid;
+
+						positionAjoutTache = positionAjoutTache + 3;
+						task = task + 1;
+
+						printf("[%d] %d\n", cmd[positionAjoutTache - 3]._task, cmd[positionAjoutTache - 2]._pid);
+						pause();
+					}
 				}
 			}
 		}
-
-		printf("%s\n", "Je suis dehors");
-		pthread_exit(NULL);
-			
-	} else if (pid > 0) {	
-		//printf("Le pid du père : %d et le fils : %d\n", getpid(), pid);
-		wait(&pid);
-		//wallClockTimeInt = gettimeofday(&timeOfDayEnd, NULL);
-		//rUsageInt = getrusage(RUSAGE_SELF,&usage);
-	}
-
-	//if ( wallClockTimeInt == 0) {
-	//	float response = (((float)timeOfDayEnd.tv_sec - (float)timeOfDayStart.tv_sec) * 1000) 
-	//		+ (((float)timeOfDayEnd.tv_usec - (float)timeOfDayStart.tv_usec) / 1000);
-		//printf("==========================Statistics==========================\n");
-		//printf("Time used : %fms\n", response);
-	//}
-
-	//if ( rUsageInt == 0) {
-	//	end = usage.ru_stime;
-		//float response = ((float)end.tv_sec - (float)start.tv_sec * 1000) + (((float)end.tv_usec - 
-		//	(float)start.tv_usec) / 1000);
-		//printf("System CPU time used : %fms\n", response);
-		//printf("Involontary context switches : %ld\n", usage.ru_nivcsw);
-		//printf("Volontary context switches : %ld\n", usage.ru_nvcsw);
-		//printf("Page fault serviced that required I/O activity : %ld\n", usage.ru_majflt);
-		//printf("Page fault serviced without any I/O activity : %ld\n", usage.ru_minflt);
-	//}
-
-} while (exitCmd == 0);
-
+		
+	} while(1);
 }
 
-void toto() {
+/***************************************************************
+ *				Traitement de l'entrée utilisateur
+ ***************************************************************/
+int traitementEntree() {
 	int len;
-
-	printf("Log710Shell%>");
+	char tempoTab[60] = "";
 
 	if(fgets(str, 60, stdin) !=  NULL)
 	{
-		len = strlen(str); 
+		strcat(tempoTab,str);
+		len = strlen(str);
+
 		if(len > 0 && str[len-1] == '\n') {
 			str[len-1] = '\0';
 		}
 
 		arg[0] = strtok(str," \n");
 		i = 0;
-						
-		while (arg[i] != NULL)
-		{
+							
+		while (arg[i] != NULL) {
 			i = i + 1;
 			arg[i] = strtok (NULL, " \n");	
+		}	
+		
+		if (strcmp(arg[i - 1], "&") == 0) {
+			strcpy(cmd[positionAjoutTache + 2]._cmd,tempoTab);
 		}
+		return 1;
+	}
+	else return 0;
+}
+
+/***************************************************************
+ *				Terminal - Afficher Statistiques
+ ***************************************************************/
+void afficherStats(int pid, struct rusage usage, int wallClockTime, int rUsage, struct timeval timeOfDayStart, struct timeval timeOfDayEnd){
+
+	float timeUsed;
+	float timeCPU;
+
+	//Calcul du temps d'execution de la commande
+	if ( wallClockTime == 0) {
+		timeUsed = (((float)timeOfDayEnd.tv_sec - (float)timeOfDayStart.tv_sec) * 1000) + 
+				   (((float)timeOfDayEnd.tv_usec - (float)timeOfDayStart.tv_usec) / 1000);
 	}
 
-	if(strcmp(arg[0], "exit") == 0)
-	{					
-		exitCmd = 1;
-		exit(0);				
-	} else if (strcmp(arg[0], "cd") == 0) {
-		chdir(arg[1]);	
+	//Calcul du temps d'execution du CPU
+	if ( rUsage == 0) {
+		timeCPU = ((float)usage.ru_stime.tv_sec * (long)1000) + 
+				  ((float)usage.ru_stime.tv_usec / (long)1000);
 	}
+	
+	printf("\n\n***************** STATISTIQUES ******************\n");
+	printf("*\n");
+	printf("* PID Parent : %d\n", getpid());
+	printf("* PID Enfant : %d\n", pid);
+	printf("*\n");
+	printf("* Time exec. : %f ms\n", timeUsed);	
+	printf("* Time CPU :   %f ms\n", timeCPU);
+	printf("*\n");
+	printf("* Involuntary interruption : %ld\n", usage.ru_nivcsw);
+	printf("* Voluntary interruption :   %ld\n", usage.ru_nvcsw);
+	printf("*\n");
+	printf("* Page faults :   %ld\n", usage.ru_majflt);
+	printf("* Page reclaims : %ld\n", usage.ru_minflt);
+	printf("*\n");
+	printf("*************************************************\n\n");
 }
