@@ -1,0 +1,61 @@
+********************************
+*			PARTIE 01		   *
+********************************
+
+
+*** Preparation Environnement ***
+
+	1- Ouvrir un Terminal et entrer les commandes suivantes:
+
+		sudo apt-get update
+		sudo apt-get install linux-source libncurses5-dev
+		ls /usr/src/
+		uname -r
+		tar xjvf /usr/src/linux-source-4.4.0.tar.bz2
+
+*** Configuration Noyau ***
+
+	2- Dans le repertoire "/boot", copiez le fichier "config-4.15.0-34-generic"
+	3- A partir du repertoire "Home", ouvrez le dossier "linux-source-4.4.0" et collez le fichier
+	4- A partir du dossier "linux-source-4.4.0", ouvrez un Terminal et entrez les commandes suivantes:
+
+		sudo make oldconfig
+		
+		y
+		y
+		y
+		(Enter)
+		y
+		y
+		(etc..)
+
+	5- Si les options defilent a l'infini, faites les etapes 6 et 7
+
+	6- Fermez le Terminal et a partir du meme dossier ouvrez un Terminal et entrez a nouveau la commande suivante:
+
+		sudo make oldconfig
+		sudo make defconfig
+		sudo make menuconfig
+
+	7- Vous pouvez personnaliser les parametres ou simplement faire <Save> et <Exit>
+	
+	8- A partir du repertoire "Home", ouvrez le dossier "linux-source-4.4.0" et ouvrez le fichier "Makefile"
+	9- En haut, ajoutez "-log710a2018GALTC" apres l'egalite "EXTRAVERSION = ". Enregistrez le fichier puis fermez.
+
+*** Compilation Noyau ***
+
+	10- A partir du repertoire "Home", ouvrez le dossier "linux-source-4.4.0", ouvrez un Terminal et entrez la commande suivante:
+	
+		sudo make modules -j3
+
+*** Compilation Noyau *** 
+
+	11- A partir du meme Terminal, entrez la commande suivante:
+
+		sudo make -j3 && sudo make modules_instyall -j3 && sudo make install -j3
+
+	
+
+
+
+
