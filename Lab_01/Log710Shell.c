@@ -41,50 +41,49 @@ int main (int argc, char* argv[]) {
 
 		printf("Log710Shell%> ");
 
-	if(fgets(str, 60, stdin) !=  NULL){
+		if(fgets(str, 60, stdin) !=  NULL){
 
-		len = strlen(str); 
-		
-		if(len > 0 && str[len-1] == '\n') {
-			str[len-1] = '\0';
+			len = strlen(str); 
+			
+			if(len > 0 && str[len-1] == '\n') {
+				str[len-1] = '\0';
+			}
+
+			arg[0] = strtok(str," \n");
+			int i = 0;
+							
+			while (arg[i] != NULL){
+				i = i + 1;
+				arg[i] = strtok (NULL, " \n");	
+			}
 		}
 
-		arg[0] = strtok(str," \n");
-		int i = 0;
-						
-		while (arg[i] != NULL){
-			i = i + 1;
-			arg[i] = strtok (NULL, " \n");	
-		}
-	}
+		if(strcmp(arg[0], "exit") == 0){
+			exitCmd = 1;
+			exit(0);				
+		} 
+		else if (strcmp(arg[0], "cd") == 0) {
+			chdir(arg[1]);	
+		}	
+		else {
 
-	if(strcmp(arg[0], "exit") == 0){
-		exitCmd = 1;
-		exit(0);				
-	} 
-	else if (strcmp(arg[0], "cd") == 0) {
-		chdir(arg[1]);	
-	}	
-	else {
-
-		//Initialise le Package ID
-		pid_t pid = fork(); 
-
+			//Initialise le Package ID
+			pid_t pid = fork(); 
 		
-		//Arret de l'execution si aucunes commandes n'est entrées.
-		if (argc < 1){ erreurCommande(arg); }
+			//Arret de l'execution si aucunes commandes n'est entrées.
+			if (argc < 1){ erreurCommande(arg); }
 
-		//Arret de l'execution si on retrouve une erreur de fork.
-		if (pid <= -1){ erreurFork(); }
+			//Arret de l'execution si on retrouve une erreur de fork.
+			if (pid <= -1){ erreurFork(); }
 
-		//Processus Fils
-		else if (pid == 0){ processusEnfant(arg); }
+			//Processus Fils
+			else if (pid == 0){ processusEnfant(arg); }
 
-		//Processus Parent
-		else if (pid > 0){ processusParent(pid, argv, arg); }
-	}
+			//Processus Parent
+			else if (pid > 0){ processusParent(pid, argv, arg); }
+		}
 
-} while (exitCmd == 0);
+	} while (1);
 }
 
 /***************************************************************
@@ -141,11 +140,11 @@ void processusEnfant(char* arg[]){
 
 	//Affiche l'information du repertoire selon la commande entrée
 	execvp(arg[0], arg);
-
+	
 	//Arrêt de l'execution si la commande est inconnu
-	erreurCommande(arg);
+	erreurCommande(arg);	
 	abort();
-	exit(0);	
+	exit(0);
 }
 
 /***************************************************************
@@ -159,22 +158,17 @@ void processusParent(int pid, char* argv[], char* arg[]){
 	struct timeval start;
 	struct timeval timeOfDayStart, timeOfDayEnd;
 
-
-	if (getrusage(RUSAGE_SELF, &usage) == 0) {
-		start = usage.ru_stime;
-	}
-
 	//Temporel: démarrer
 	gettimeofday(&timeOfDayStart, NULL);	
-	gettimeofday(&start, NULL);
 
 	//Attend le Package ID avant de continuer
 	wait(pid);
 	
+	rUsage = getrusage(RUSAGE_SELF,&usage);
+	
 	//Temporel: arrêt 
 	wallClockTime = gettimeofday(&timeOfDayEnd, NULL);
-	rUsage = getrusage(RUSAGE_SELF,&usage);
-
+	
 	//Calcul et affichage des resultats obtenus de la commande entrée
 	afficherStats(pid, argv, arg, usage, wallClockTime, rUsage, timeOfDayStart, timeOfDayEnd);
 }
