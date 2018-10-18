@@ -28,7 +28,7 @@ int main (int argc, char* argv[]) {
 
 	//Initialise le Package ID
 	pid_t pid = fork(); 
-	
+
 	//Arret de l'execution si aucunes commandes n'est entrées.
 	if (argc <= 1){ erreurCommande(argv); }
 
