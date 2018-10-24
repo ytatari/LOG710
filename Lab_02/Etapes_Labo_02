@@ -17,6 +17,7 @@
 
 	2- Dans le repertoire "/boot", copiez le fichier "config-4.15.0-34-generic"
 	3- A partir du repertoire "Home", ouvrez le dossier "linux-source-4.4.0" et collez le fichier
+		cp /boot/config-4.15.0-34-generic /home/.../linux-source-4.4.0
 	4- A partir du dossier "linux-source-4.4.0", ouvrez un Terminal et entrez les commandes suivantes:
 
 		sudo make oldconfig
