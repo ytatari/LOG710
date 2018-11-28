@@ -32,7 +32,7 @@ int main(){
 	noeud *origine = initMem(1024);
 
 	//Affiche l'état du bloc mémoire à l'origine
-	afficher_mem(origine);
+	afficher_etat(origine);
 
 	//
 	firstFit(origine, 128);

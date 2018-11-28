@@ -129,4 +129,9 @@ int mem_est_alloue(noeud *memOrigine);
 /***************************************************************	 		
  *	Description:	Permet d'afficher l'état de la mémoire	
  ***************************************************************/
-void afficher_mem(noeud *memOrigine);
+void afficher_etat(noeud *memOrigine);
+
+/***************************************************************	 		
+ *	Description:	Permet d'afficher les parametres memoire
+ ***************************************************************/
+void afficher_param(noeud *memOrigine);
