@@ -38,13 +38,13 @@ int main(){
 	firstFit(origine, 128);
 
 	//
-	//bestFit(origine, 128);
+	bestFit(origine, 128);
 
 	//
-	//worstFit(origine, 128);
+	worstFit(origine, 128);
 
 	//
-	//nextFit(origine, origine, 128);
+	nextFit(origine, origine, 128);
 
 	return SUCCES;
 }
