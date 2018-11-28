@@ -71,7 +71,7 @@ noeud *allouMem(int taille, noeud *mem){
     memBloc *bloc = malloc(sizeof(memBloc));
 
     //Initialise les parametres du nouveau bloc
-    bloc -> etatBloc 	= 1
+    bloc -> etatBloc 	= 1;
     bloc -> tailleBloc 	= taille;
     bloc -> adresseBloc = mem -> valeur -> adresseBloc;
 
@@ -80,7 +80,6 @@ noeud *allouMem(int taille, noeud *mem){
 
 	//Allocation d'un nouvel space memoire du noeud
   	noeud *noeud = malloc(sizeof(noeud));
-  	noeud *pBloc = noeud;
   	
   	//Initialise les parametres du nouveau noeud
   	noeud -> valeur 	= bloc;
@@ -89,7 +88,7 @@ noeud *allouMem(int taille, noeud *mem){
 
   	mem -> precedent = noeud;
 
-  	return pBloc;
+  	return noeud;
 }
 
 /***************************************************************
@@ -98,41 +97,41 @@ noeud *allouMem(int taille, noeud *mem){
  *	Description:	Libere un bloc memoire similaire a free()
  *		
  ***************************************************************/
-noeud *libereMem(noeud *pBloc){
+noeud *libereMem(noeud *bloc){
 
-	pBloc -> valeur -> etat = 0;
+	bloc -> valeur -> etatBloc = 0;
 
-	noeud *blocPrecedent = pBloc -> precedent;
-	noeud *blocSuivant   = pBloc -> suivant;
+	noeud *blocPrecedent = bloc -> precedent;
+	noeud *blocSuivant   = bloc -> suivant;
 
 	//Condition pour traiter le bloc (noeud) precedent.
-	if(blocPrecedent -> valeur -> etat == 0){
+	if(blocPrecedent -> valeur -> etatBloc == 0){
 
 		//
-		pBloc -> valeur -> adresseBloc = blocPrecedent -> valeur -> adresseBloc;
-		pBloc -> valeur -> tailleBloc += blocPrecedent -> valeur -> tailleBloc;
+		bloc -> valeur -> adresseBloc = blocPrecedent -> valeur -> adresseBloc;
+		bloc -> valeur -> tailleBloc += blocPrecedent -> valeur -> tailleBloc;
 
 		//
-		pBloc -> precedent = blocPrecedent -> precedent;
-		pBloc -> precedent -> precedent = pBloc;
+		bloc -> precedent = blocPrecedent -> precedent;
+		bloc -> precedent -> precedent = bloc;
 
 		//Libere l'espace memoire du bloc precedent
 		free(blocPrecedent);
 	}
 	//Condition pour traiter le bloc (noeud) suivant.
-	else if(blocSuivant -> valeur -> etat == 0){
+	else if(blocSuivant -> valeur -> etatBloc == 0){
 
 		//
-		pBloc -> valeur -> tailleBloc += blocSuivant -> valeur -> tailleBloc
+		bloc -> valeur -> tailleBloc += blocSuivant -> valeur -> tailleBloc;
 		
 		//
-		pBloc -> suivant = blocSuivant -> suivant;
-		pBloc -> suivant -> precedent = pBloc
+		bloc -> suivant = blocSuivant -> suivant;
+		bloc -> suivant -> precedent = bloc;
 
 		//Libere l'espace memoire du bloc suivant
 		free(blocSuivant);
 	}
-	return pBloc;
+	return bloc;
 }
 
 /***************************************************************
@@ -149,7 +148,7 @@ int nBlocLibres(noeud *memOrigine){
 	while(mem != NULL){
 		
 		//
-		if(mem -> valeur -> etat == 0) 
+		if(mem -> valeur -> etatBloc == 0) 
 			nBlocs += 1;
 		mem = mem -> suivant;
 	}
@@ -170,7 +169,7 @@ int nBlocAlloues(noeud *memOrigine){
 	while(mem != NULL){
 
 		//
-		if(mem -> valeur -> etat == 1)
+		if(mem -> valeur -> etatBloc == 1)
 			nBlocAll += 1;
 		mem = mem -> suivant;
 	}
@@ -192,7 +191,7 @@ int memLibre(noeud *memOrigine){
 	while(mem != NULL){
 
 		//
-		if(mem -> valeur -> etat == 0)
+		if(mem -> valeur -> etatBloc == 0)
 			mLib += mem -> valeur -> tailleBloc;
 		mem = mem -> suivant;
 	}
@@ -213,7 +212,7 @@ int mem_pGrand_libre(noeud *memOrigine) {
     while (mem != NULL) {
 
     	//
-        if ((mem -> valeur -> etat == 0) && (mem -> valeur -> tailleBloc > tGraBloc))
+        if ((mem -> valeur -> etatBloc == 0) && (mem -> valeur -> tailleBloc > tGraBloc))
        		tGraBloc = mem -> valeur -> tailleBloc;
         mem = mem -> suivant;
     }
@@ -262,3 +261,101 @@ void afficher_mem(noeud *memOrigine) {
 
 	// À continuer
 }
+
+
+
+
+
+
+
+// /***************************************************************
+//  *	Titre:			MAIN 		
+//  *
+//  *	Description:	
+//  *			
+//  *		
+//  ***************************************************************/
+// int main(){
+
+// 	//Initialise la memoire
+// 	noeud *origine = initMem(1024);
+
+// 	//Affiche l'état du bloc mémoire à l'origine
+// 	afficher_mem(origine);
+
+// 	//
+// 	firstFit(origine, 128);
+
+// 	//
+// 	//bestFit(origine, 128);
+
+// 	//
+// 	//worstFit(origine, 128);
+
+// 	//
+// 	//nextFit(origine, origine, 128);
+
+// 	return SUCCES;
+// }
+
+// /***************************************************************
+//  *	Titre:			FIRST FIT 		
+//  *
+//  *	Description:	
+//  *			
+//  *		
+//  ***************************************************************/
+// int firstFit(noeud *memOrigine, int taille){
+
+// 	noeud *mem = memOrigine;
+
+// 	while(mem != NULL){
+
+// 		//Vérifie si le bloc memoire est à son point initial
+// 		if((mem -> valeur -> etatBloc) == 0 ){
+
+// 			//
+// 			if((mem -> valeur -> tailleBloc) >= taille){
+				
+// 				//Alloue un nouveau bloc memoire
+// 				allouMem(taille, mem);
+// 				return 0;
+// 			}
+// 		}
+// 		mem = mem -> suivant;
+// 	}
+// 	return ECHEC;
+// }
+
+// /***************************************************************
+//  *	Titre:			BEST FIT 		
+//  *
+//  *	Description:	
+//  *			
+//  *		
+//  ***************************************************************/
+// int bestFit(noeud *memOrigine, int taille){
+// 	return 0;
+// }
+
+// /***************************************************************
+//  *	Titre:			WORST FIT 		
+//  *
+//  *	Description:	
+//  *			
+//  *		
+//  ***************************************************************/
+// int worstFit(noeud *memOrigine, int taille){
+// 	return 0;
+// }
+
+// /***************************************************************
+//  *	Titre:			NEXT FIT 		
+//  *
+//  *	Description:	
+//  *			
+//  *		
+//  ***************************************************************/
+// int nextFit(noeud *memOrigine, noeud *noeudOrigine, int taille){
+// 	return 0;
+// }

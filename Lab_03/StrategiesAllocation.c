@@ -36,13 +36,13 @@ int main(){
 	firstFit(origine, 128);
 
 	//
-	bestFit(origine, 128);
+	//bestFit(origine, 128);
 
 	//
-	worstFit(origine, 128);
+	//worstFit(origine, 128);
 
 	//
-	nextFit(origine, origine, 128);
+	//nextFit(origine, origine, 128);
 
 	return SUCCES;
 }
@@ -84,7 +84,7 @@ int firstFit(noeud *memOrigine, int taille){
  *		
  ***************************************************************/
 int bestFit(noeud *memOrigine, int taille){
-	return NULL;
+	return 0;
 }
 
 /***************************************************************
@@ -95,7 +95,7 @@ int bestFit(noeud *memOrigine, int taille){
  *		
  ***************************************************************/
 int worstFit(noeud *memOrigine, int taille){
-	return NULL;
+	return 0;
 }
 
 /***************************************************************
@@ -106,6 +106,6 @@ int worstFit(noeud *memOrigine, int taille){
  *		
  ***************************************************************/
 int nextFit(noeud *memOrigine, noeud *noeudOrigine, int taille){
-	return NULL;
+	return 0;
 }
 

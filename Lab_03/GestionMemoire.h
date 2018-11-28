@@ -21,6 +21,31 @@
 #define ECHEC -1
 
 
+/***************************************************************	 		
+ *	Description:		Structure qui garde en memoire
+ 						l'information du bloc.		
+ ***************************************************************/
+typedef struct memBloc {	
+    int 	etatBloc;
+    int 	tailleBloc;
+    u_long 	adresseBloc;
+} memBloc;
+
+/***************************************************************	 		
+ *	Description:		Structure qui permet de lier les blocs.	
+ ***************************************************************/
+typedef struct noeud {
+    memBloc *valeur;
+    struct 	noeud *precedent;
+    struct 	noeud *suivant;
+} noeud;
+
+
+
+/***************************************************************	 				
+ ***************************************************************/
+
+
 
 /***************************************************************	 		
  *	Titre:	FIRST FIT			
@@ -44,34 +69,22 @@ int nextFit(noeud *memOrigine, noeud *noeudOrigine, int taille);
 
 
 
+
 /***************************************************************	 				
  ***************************************************************/
 
 
-/***************************************************************	 		
- *	Description:		Structure qui garde en memoire
- 						l'information du bloc.		
- ***************************************************************/
-typedef struct memBloc {	
-    int 	etatBloc;
-    int 	tailleBloc;
-    u_long 	adresseBloc;
-} memBloc;
-
-/***************************************************************	 		
- *	Description:		Structure qui permet de lier les blocs.	
- ***************************************************************/
-typedef struct noeud {
-    memBloc *valeur;
-    struct 	noeud *precedent;
-    struct 	noeud *suivant;
-} noeud;
 
 /***************************************************************	 		
  *	Description:	Initialise les structures de donnes 
  					du gestionnaire.				
  ***************************************************************/
 noeud *initMem(int taille);
+
+/***************************************************************	 		
+ *	Description:	Initialise l'information du noeud			
+ ***************************************************************/
+noeud *initNoeud(memBloc *bloc);
 
 /***************************************************************	 		
  *	Description:	Alloue un nouveau bloc memoire			
@@ -116,4 +129,4 @@ int mem_est_alloue(noeud *memOrigine);
 /***************************************************************	 		
  *	Description:	Permet d'afficher l'état de la mémoire	
  ***************************************************************/
-int afficher_mem(noeud *memOrigine);
+void afficher_mem(noeud *memOrigine);

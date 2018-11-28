@@ -53,7 +53,7 @@
 
 	11- A partir du meme Terminal, entrez la commande suivante:
 
-		sudo make -j3 && sudo make modules_instyall -j3 && sudo make install -j3
+		sudo make -j3 && sudo make modules_install -j3 && sudo make install -j3
 
 	
 
