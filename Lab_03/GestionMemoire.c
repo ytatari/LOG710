@@ -15,7 +15,8 @@
  *
  ***************************************************************/
 #include <stdio.h>
-#include "GestionMemoire.h"
+#include <stdlib.h>
+#include "StructureData.h"
 
 /***************************************************************
  *	Titre:			INITIALISER MEMOIRE 		

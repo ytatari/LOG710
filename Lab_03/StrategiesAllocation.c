@@ -15,7 +15,9 @@
  *
  ***************************************************************/
 #include <stdio.h>
-#include "GestionMemoire.h"
+#include <stdlib.h>
+#include "GestionMemoire.c"
+//#include "StructureData.h"
 
 /***************************************************************
  *	Titre:			MAIN 		
@@ -68,7 +70,7 @@ int firstFit(noeud *memOrigine, int taille){
 				
 				//Alloue un nouveau bloc memoire
 				allouMem(taille, mem);
-				return 0;
+				return SUCCES;
 			}
 		}
 		mem = mem -> suivant;
@@ -84,7 +86,7 @@ int firstFit(noeud *memOrigine, int taille){
  *		
  ***************************************************************/
 int bestFit(noeud *memOrigine, int taille){
-	return 0;
+	return SUCCES;
 }
 
 /***************************************************************
@@ -95,7 +97,7 @@ int bestFit(noeud *memOrigine, int taille){
  *		
  ***************************************************************/
 int worstFit(noeud *memOrigine, int taille){
-	return 0;
+	return SUCCES;
 }
 
 /***************************************************************
@@ -106,6 +108,6 @@ int worstFit(noeud *memOrigine, int taille){
  *		
  ***************************************************************/
 int nextFit(noeud *memOrigine, noeud *noeudOrigine, int taille){
-	return 0;
+	return SUCCES;
 }
 
