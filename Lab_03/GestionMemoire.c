@@ -212,9 +212,13 @@ int mem_pGrand_libre(noeud *memOrigine) {
 
     while (mem != NULL) {
 
-    	//
-        if ((mem -> valeur -> etatBloc == 0) && (mem -> valeur -> tailleBloc > tGraBloc))
-       		tGraBloc = mem -> valeur -> tailleBloc;
+    	///Vérifie si le bloc memoire est à son point initial
+        if((mem -> valeur -> etatBloc) == 0){
+
+        	//
+			if((mem -> valeur -> tailleBloc) > tGraBloc)
+       			tGraBloc = mem -> valeur -> tailleBloc;
+       	}
         mem = mem -> suivant;
     }
     return tGraBloc;
