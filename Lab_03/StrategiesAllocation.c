@@ -1,15 +1,15 @@
 /***************************************************************
  *	Titre:			
  *
- *	Description:	
- *			
+ *	Description:		Sénario de tests de
+ *				méthodes d'allocations mémoire
  *		
  *	Etudiants:		Alexandre Laroche
- *					Tiahiti Caspar
- 					Dominic Kanrabat
+ *				Tiahiti Caspar
+ 				Dominic Roberge
  *
  *	Cours:			LOG710
- *	Institution:	ETS
+ *	Institution:		ETS
  *	
  *	Date:			21 novembre 2018
  *
@@ -93,7 +93,34 @@ int main() {
 	afficher_param(mem);
 
 	// Test de NextFit
-	nextFit(mem, mem, 128);
+	printf("\n - - - Test de NextFit - - -\n\n0 = OK\n-1 = ERREUR\n\n");
+	mem = premierNoeud(mem);
+	mem = noeudIndex(mem, 3);
+	printf(" - mem: Bloc #4\n");
+	int nf1 = nextFit(mem, 5);
+	printf(" - nextFit(5): %d\n", nf1);
+	int nf2 = nextFit(mem, 5);
+	printf(" - nextFit(5): %d\n", nf2);
+	mem = premierNoeud(mem);
+	printf(" - mem: Bloc #1\n");
+	int nf3 = nextFit(mem, 5);
+	printf(" - nextFit(5): %d\n", nf3);
+
+	afficher_etat(mem);
+	afficher_param(mem);
+
+	// Test de mem_est_alloue
+	printf("\n - - - Test de mem_est_alloue - - -\n\n1 = OUI\n0 = NON\n\n");
+	mem = premierNoeud(mem);
+	noeud *noeud1 = mem;
+	int memAll1 = mem_est_alloue(mem, noeud1 -> valeur -> adresseBloc);
+	printf(" - mem_est_alloue(%d): %d\n", noeud1 -> valeur -> adresseBloc, memAll1);
+	noeud *noeud2 = noeudIndex(mem, 2);
+	int memAll2 = mem_est_alloue(mem, noeud2 -> valeur -> adresseBloc);
+	printf(" - mem_est_alloue(%d): %d\n", noeud2 -> valeur -> adresseBloc, memAll2);
+	
+	// Print de la fin
+	printf("\n - - - Fin du sénario de tests - - -\n\n");
 
 	return SUCCES;
 }
@@ -227,11 +254,27 @@ int worstFit(noeud *mem, int taille) {
 /***************************************************************
  *	Titre:			NEXT FIT 		
  *
- *	Description:	
- *			
+ *	Description:	Variante de First Fit qui agis
+ *			comme ce dernier mais ne commence pas
+ *			au début mais à la référance donnée
  *		
  ***************************************************************/
-int nextFit(noeud *memOrigine, noeud *noeudOrigine, int taille){
-	return SUCCES;
+int nextFit(noeud *mem, int taille) {
+	// On commence directement la boucle avec le noeud donné
+	// Si le noeud est le premier cela se comporte comme First Fit
+
+	while(mem != NULL) {
+		// Vérifie si le bloc memoire est à son point initial
+		// et que la taille est suffisante
+		if((mem -> valeur -> etatBloc) == 0 && (mem -> valeur -> tailleBloc) >= taille) {
+			// Alloue un nouveau bloc memoire
+			allouMem(taille, mem);
+			return SUCCES;
+		}
+
+		mem = mem -> suivant;
+	}
+
+	return ECHEC;
 }
 

@@ -26,7 +26,7 @@
 
 /***************************************************************	 		
  *	Description:		Structure qui garde en memoire
- 						l'information du bloc.		
+ *				l'information du bloc.		
  ***************************************************************/
 typedef struct memBloc {	
     int 	etatBloc;
@@ -35,7 +35,8 @@ typedef struct memBloc {
 } memBloc;
 
 /***************************************************************	 		
- *	Description:		Structure qui permet de lier les blocs.	
+ *	Description:		Structure qui permet de lier 
+ *				les blocs.	
  ***************************************************************/
 typedef struct noeud {
     memBloc *valeur;
@@ -53,22 +54,22 @@ typedef struct noeud {
 /***************************************************************	 		
  *	Titre:	FIRST FIT			
  ***************************************************************/
-int firstFit(noeud *memOrigine, int taille);
+int firstFit(noeud *mem, int taille);
 
 /***************************************************************	 		
  *	Titre:	BEST FIT				
  ***************************************************************/
-int bestFit(noeud *memOrigine, int taille);
+int bestFit(noeud *mem, int taille);
 
 /***************************************************************	 		
  *	Titre:	WORST FIT				
  ***************************************************************/
-int worstFit(noeud *memOrigine, int taille);
+int worstFit(noeud *mem, int taille);
 
 /***************************************************************	 		
  *	Titre:	NEXT FIT				
  ***************************************************************/
-int nextFit(noeud *memOrigine, noeud *noeudOrigine, int taille);
+int nextFit(noeud *mem, int taille);
 
 
 
@@ -108,6 +109,11 @@ noeud *premierNoeud(noeud *mem);
  *	Description:	Libere un bloc de la chaine à un index			
  ***************************************************************/
 noeud *libereNoeudIndex(noeud *memOrigine, int index);
+
+/***************************************************************	 		
+ *	Description:	Retourne le noeud ou NULL à un index		
+ ***************************************************************/
+noeud *noeudIndex(noeud *memOrigine, int index);
 
 /***************************************************************	 		
  *	Description:	Retourne le nombre de blocs de memoire	

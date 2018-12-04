@@ -181,7 +181,7 @@ noeud *premierNoeud(noeud *mem) {
 /***************************************************************
  *	Titre:		Libère le noeud à partir de l'index	
  *
- *	Description:	Retourne le noeud libéré si possible
+ *	Description:	Retourne le noeud libéré ou NULL
  *				
  ***************************************************************/
 noeud *libereNoeudIndex(noeud *memOrigine, int index) {
@@ -198,7 +198,30 @@ noeud *libereNoeudIndex(noeud *memOrigine, int index) {
 		i++;
 	}
 
-	return mem;
+	return NULL;
+}
+
+/***************************************************************
+ *	Titre:		Donne le noeud à l'index
+ *
+ *	Description:	Retourne le noeud ou NULL à un index
+ *				
+ ***************************************************************/
+noeud *noeudIndex(noeud *memOrigine, int index) {
+	int i = 0;
+
+	noeud *mem = memOrigine;
+
+	while(mem != NULL) {
+		if(i == index) {
+			return mem;
+		}
+
+		mem = mem -> suivant;
+		i++;
+	}
+
+	return NULL;
 }
 
 /***************************************************************
@@ -344,9 +367,9 @@ int mem_est_alloue(noeud *memOrigine, int pOctet) {
 
 	while(mem != NULL) {
 		int begin = mem -> valeur -> adresseBloc;
-		int end = begin + (mem -> valeur -> tailleBloc);
+		int end = begin + (mem -> valeur -> tailleBloc) -1;
 
-		if(pOctet >= begin && pOctet <= end)
+		if(pOctet >= begin && pOctet <= end && mem -> valeur -> etatBloc == 1)
 			return TRUE;
 
 		mem = mem -> suivant;
