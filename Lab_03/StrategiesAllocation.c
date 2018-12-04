@@ -28,47 +28,53 @@
 int main() {
 
 	// Initialise la memoire
-	noeud *origine = initMem(80);
+	noeud *mem = initMem(80);
 
 	// Affiche l'état du bloc mémoire à l'origine
-	afficher_etat(origine);
-
+	afficher_etat(mem);
 	// Affiche les fonctions de base des noeuds
-	afficher_param(origine);
+	afficher_param(mem);
 
 	// Test de FirstFit
 	printf("\n- - - Test de FirstFit - - -\n\n0 = OK\n-1 = ERREUR\n\n");
 
-	int ff1 = firstFit(origine, 10);
+	int ff1 = firstFit(mem, 10);
 	printf("firstFit(10): %d\n", ff1);
-	int ff2 = firstFit(origine, 5);
+	int ff2 = firstFit(mem, 5);
 	printf("firstFit(5): %d\n", ff2);
-	int ff3 = firstFit(origine, 1000);
+	int ff3 = firstFit(mem, 1000);
 	printf("firstFit(1000): %d\n", ff3);
-	int ff4 = firstFit(origine, 5);
+	int ff4 = firstFit(mem, 5);
 	printf("firstFit(5): %d\n", ff4);
 
-	origine = premierNoeud(origine);
-	afficher_etat(origine);
-	afficher_param(origine);
+	afficher_etat(mem);
+	afficher_param(mem);
 
 	// On efface le bloc de 5 à la position 2
 	printf("\n- - - Libere le bloc #2 de 5 - - -\n\n");
-	origine = libereNoeudIndex(origine, 1);
-	origine = premierNoeud(origine);
-	afficher_etat(origine);
-	afficher_param(origine);
+	mem = premierNoeud(mem);
+	mem = libereNoeudIndex(mem, 1);
+
+	afficher_etat(mem);
+	afficher_param(mem);
 
 	// Test de BestFit
 	printf("\n- - - Test de BestFit - - -\n\n0 = OK\n-1 = ERREUR\n\n");
-	int bf1 = bestFit(origine, 5);
-	printf("bestFit(5): %d\n", bf1);
+	int bf1 = bestFit(mem, 10);
+	printf("bestFit(10): %d\n", bf1);
+	int bf2 = bestFit(mem, 5);
+	printf("bestFit(5): %d\n", bf2);
+	int bf3 = bestFit(mem, 1000);
+	printf("bestFit(1000): %d\n", bf3);
+
+	afficher_etat(mem);
+	afficher_param(mem);
 
 	// Test de WorstFit
-	worstFit(origine, 128);
+	worstFit(mem, 128);
 
 	// Test de NextFit
-	nextFit(origine, origine, 128);
+	nextFit(mem, mem, 128);
 
 	return SUCCES;
 }
@@ -102,12 +108,50 @@ int firstFit(noeud *mem, int taille){
 /***************************************************************
  *	Titre:			BEST FIT 		
  *
- *	Description:	
- *			
+ *	Description:	Va chercher le premier bloc
+ *			le plus petit possible
  *		
  ***************************************************************/
 int bestFit(noeud *mem, int taille) {
 
+	noeud *memOrigine = premierNoeud(mem);
+	mem = memOrigine;
+
+	int i = 0;
+	int min = mem_pGrand_libre(mem);
+	int minIndex = -1;
+	int blocs = nBlocs(mem);
+
+	while(mem != NULL) {
+		// Vérifie que le bloc est non-alloué et suffisant ET...
+		// que sa taille est inférieur au min 
+		// OU que c'est le dernier bloc et sa taille est inférieur ou égale
+		if((mem -> valeur -> etatBloc) == 0 && (mem -> valeur -> tailleBloc) >= taille &&
+		  ((mem -> valeur -> tailleBloc) < min || (i == blocs-1 && (mem -> valeur -> tailleBloc) <= min))) {
+			min = mem -> valeur -> tailleBloc;
+			minIndex = i;
+		}
+
+		mem = mem -> suivant;
+		i++;
+	}
+
+	// Si on a trouver un bloc qui convient
+	if(minIndex >= 0) {
+		mem = memOrigine;
+		i = 0;
+
+		while(mem != NULL) {
+			if(i == minIndex) {
+				// Alloue un nouveau bloc memoire
+				allouMem(taille, mem);
+				return SUCCES;
+			}
+
+			mem = mem -> suivant;
+			i++;
+		}
+	}
 
 	return ECHEC;
 }
@@ -115,8 +159,8 @@ int bestFit(noeud *mem, int taille) {
 /***************************************************************
  *	Titre:			WORST FIT 		
  *
- *	Description:	
- *			
+ *	Description:	Va chercher le premier bloc
+ *			le plus grand
  *		
  ***************************************************************/
 int worstFit(noeud *mem, int taille){

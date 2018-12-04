@@ -76,31 +76,38 @@ noeud *allouMem(int taille, noeud *mem){
 		bloc -> etatBloc 	= 1;
 		bloc -> tailleBloc 	= taille;
 		bloc -> adresseBloc 	= mem -> valeur -> adresseBloc;
-
-		// Allocation d'un nouvel space memoire du noeud
-		noeud *noeud 		= malloc(sizeof(noeud));
-		noeud -> valeur 	= bloc;
 		
-		// Si le noeuf non-alloué a un précédent
-		// ce dernier a pour suivant le nouveau noeud
-		if(mem -> precedent != NULL)
-			mem -> precedent -> suivant = noeud;
-
-		// Le nouveau noeud est placé devant le noeud non-alloué
-	  	noeud -> precedent  		= mem -> precedent;
-	  	noeud -> suivant    		= mem;
-	  	mem -> precedent 		= noeud;
+		// Si le bloc non-alloué est vidé on le remplace
+		if((mem -> valeur -> tailleBloc) == taille) {
+			//memBloc *blocLibre = mem -> valeur;
+			//mem -> valeur = NULL;
+			//free(blocLibre);
+			
+			mem -> valeur = bloc;
 		
-		// Changement des valeurs du bloc non-alloué
-		mem -> valeur -> adresseBloc += taille;
-		mem -> valeur -> tailleBloc  -= taille;
-		
-		// Vérifie s'il faut détruire le bloc non-alloué
-		if(mem -> valeur -> tailleBloc == 0) {
-			noeud -> suivant = NULL;
-			free(mem);
+		// Sinon on crée un nouveau noeud au début du libre
+		} else {
+			// Allocation d'un nouvel space memoire du noeud
+			noeud *noeud = malloc(sizeof(noeud));
+			noeud -> valeur = bloc;
 
-			return noeud;
+			// Changement des valeurs du bloc non-alloué
+			mem -> valeur -> adresseBloc += taille;
+			mem -> valeur -> tailleBloc  -= taille;
+
+			// Le précédent du nouveau noeud est l'ancien du libre
+			noeud -> precedent = mem -> precedent;
+
+			// Si le noeud non-alloué a un précédent
+			// ce dernier a pour suivant le nouveau noeud
+			if(noeud -> precedent != NULL)
+				noeud -> precedent -> suivant = noeud;
+
+			// Le précédent du noeud est le nouveau
+			mem -> precedent = noeud;
+
+			// Le suivant du nouveau noeud est celui libre
+			noeud -> suivant = mem;
 		}
 	}
 
@@ -184,15 +191,32 @@ noeud *libereNoeudIndex(noeud *memOrigine, int index) {
 
 	while(mem != NULL) {
 		if(i == index) {
-			printf("DEBUG 1 - %d taille\n", mem -> valeur -> tailleBloc);
-			libereMem(mem);
-			break;
+			return libereMem(mem);
 		}
+
 		mem = mem -> suivant;
 		i++;
 	}
 
 	return mem;
+}
+
+/***************************************************************
+ *	Titre:			NOMBRE BLOCS 		
+ *
+ *	Description:	Retourne le nombre de blocs
+ *				
+ ***************************************************************/
+int nBlocs(noeud *memOrigine) {
+
+	int nBlocs = 0;
+	noeud *mem = memOrigine;
+
+	while(mem != NULL){
+		nBlocs += 1;
+		mem = mem -> suivant;
+	}
+	return nBlocs;
 }
 
 /***************************************************************
@@ -319,12 +343,12 @@ int mem_est_alloue(noeud *memOrigine) {
  *			
  *		
  ***************************************************************/
-void afficher_etat(noeud *memOrigine) {
+void afficher_etat(noeud *mem) {
+	mem = premierNoeud(mem);
 
 	printf("\n\n********************************\n");
 	printf("Voici l'état des blocs mémoire:\n\n");
 
-	noeud *mem = memOrigine;
 	int i = 1;
 
 	while (mem != NULL) {
@@ -344,14 +368,15 @@ void afficher_etat(noeud *memOrigine) {
  *			
  *		
  ***************************************************************/
-void afficher_param(noeud *memOrigine) {
+void afficher_param(noeud *mem) {
+	mem = premierNoeud(mem);
 
 	printf("\n\n********************************\n");
 	printf("Voici les paramètres mémoire:\n\n");
-	printf("Blocs libres :\t%d\n", nBlocLibres(memOrigine));
-	printf("Blocs alloués :\t%d\n", nBlocAlloues(memOrigine));
-	printf("Mémoire libre :\t%d\n", memLibre(memOrigine));
-	printf("Taille max :\t%d\n\n", mem_pGrand_libre(memOrigine));
+	printf("Blocs libres :\t%d\n", nBlocLibres(mem));
+	printf("Blocs alloués :\t%d\n", nBlocAlloues(mem));
+	printf("Mémoire libre :\t%d\n", memLibre(mem));
+	printf("Taille max :\t%d\n\n", mem_pGrand_libre(mem));
 
 }
 

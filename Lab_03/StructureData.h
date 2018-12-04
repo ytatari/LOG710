@@ -107,6 +107,11 @@ noeud *premierNoeud(noeud *mem);
 noeud *libereNoeudIndex(noeud *memOrigine, int index);
 
 /***************************************************************	 		
+ *	Description:	Retourne le nombre de blocs de memoire	
+ ***************************************************************/
+int nBlocs(noeud *memOrigine);
+
+/***************************************************************	 		
  *	Description:	Retourne le nombre de blocs de memoire libre		
  ***************************************************************/
 int nBlocLibres(noeud *memOrigine);
@@ -139,9 +144,9 @@ int mem_est_alloue(noeud *memOrigine);
 /***************************************************************	 		
  *	Description:	Permet d'afficher l'état de la mémoire	
  ***************************************************************/
-void afficher_etat(noeud *memOrigine);
+void afficher_etat(noeud *mem);
 
 /***************************************************************	 		
  *	Description:	Permet d'afficher les parametres memoire
  ***************************************************************/
-void afficher_param(noeud *memOrigine);
+void afficher_param(noeud *mem);
