@@ -387,8 +387,8 @@ void afficher_param(noeud *mem) {
 	printf(" Blocs libres :\t\t%d\n", nBlocLibres(mem));
 	printf(" Blocs alloués :\t%d\n", nBlocAlloues(mem));
 	printf(" Mémoire libre :\t%d\n", memLibre(mem));
-	printf(" Taille max :\t\t%d\n\n", pGrand_libre);
-	printf(" Nb. bloc < %d :\t\t%d\n\n", pGrand_libre, mem_small_free(mem, pGrand_libre));
+	printf(" Taille max :\t\t%d\n", pGrand_libre);
+	printf(" Nb. bloc < %d :\t%d\n\n", pGrand_libre, mem_small_free(mem, pGrand_libre));
 
 
 }
