@@ -113,41 +113,49 @@ noeud *allouMem(int taille, noeud *mem){
  *	Description:	Libere un bloc memoire similaire a free()
  *		
  ***************************************************************/
-noeud *libereMem(noeud *bloc){
+noeud *libereMem(noeud *mem) {
+	// L'état du bloc est maintenant libre
+	mem -> valeur -> etatBloc = 0;
 
-	bloc -> valeur -> etatBloc = 0;
+	noeud *blocPrecedent = mem -> precedent;
+	noeud *blocSuivant   = mem -> suivant;
 
-	noeud *blocPrecedent = bloc -> precedent;
-	noeud *blocSuivant   = bloc -> suivant;
-
-	//Condition pour traiter le bloc (noeud) precedent.
+	// Condition pour traiter le bloc (noeud) precedent.
 	if(blocPrecedent -> valeur -> etatBloc == 0){
 
-		//
-		bloc -> valeur -> adresseBloc = blocPrecedent -> valeur -> adresseBloc;
-		bloc -> valeur -> tailleBloc += blocPrecedent -> valeur -> tailleBloc;
+		// On change la position du bloc et sa taille en additionnant
+		mem -> valeur -> adresseBloc = blocPrecedent -> valeur -> adresseBloc;
+		mem -> valeur -> tailleBloc += blocPrecedent -> valeur -> tailleBloc;
 
-		//
-		bloc -> precedent = blocPrecedent -> precedent;
-		bloc -> precedent -> precedent = bloc;
+		// Le bloc précedent le bloc libre est assigné au bloc
+		mem -> precedent = blocPrecedent -> precedent;
 
-		//Libere l'espace memoire du bloc precedent
+		// Si le bloc précedent le bloc libre existe,
+		// son suivant devient celui libéré
+		if(blocPrecedent -> precedent != NULL)
+			blocPrecedent -> precedent -> suivant = mem;
+
+		// Libere l'espace memoire du bloc precedent
 		free(blocPrecedent);
 	}
-	//Condition pour traiter le bloc (noeud) suivant.
-	else if(blocSuivant -> valeur -> etatBloc == 0){
+	// Condition pour traiter le bloc (noeud) suivant.
+	else if(blocSuivant -> valeur -> etatBloc == 0) {
 
-		//
-		bloc -> valeur -> tailleBloc += blocSuivant -> valeur -> tailleBloc;
+		// On additione l'espace libre du suivant
+		mem -> valeur -> tailleBloc += blocSuivant -> valeur -> tailleBloc;
 		
-		//
-		bloc -> suivant = blocSuivant -> suivant;
-		bloc -> suivant -> precedent = bloc;
+		// Le bloc suivant du bloc libre est assigné au bloc
+		mem -> suivant = blocSuivant -> suivant;
+		
+		// Si le bloc suivant du bloc libre existe,
+		// son précedent devient celui libéré
+		if(blocSuivant -> suivant != NULL)
+			blocSuivant -> suivant -> precedent = mem;
 
-		//Libere l'espace memoire du bloc suivant
+		// Libere l'espace memoire du bloc suivant
 		free(blocSuivant);
 	}
-	return bloc;
+	return mem;
 }
 
 /***************************************************************
@@ -160,6 +168,30 @@ noeud *premierNoeud(noeud *mem) {
 	while(mem -> precedent != NULL) {
 		mem = mem -> precedent;
 	}
+	return mem;
+}
+
+/***************************************************************
+ *	Titre:		Libère le noeud à partir de l'index	
+ *
+ *	Description:	Retourne le noeud libéré si possible
+ *				
+ ***************************************************************/
+noeud *libereNoeudIndex(noeud *memOrigine, int index) {
+	int i = 0;
+
+	noeud *mem = memOrigine;
+
+	while(mem != NULL) {
+		if(i == index) {
+			printf("DEBUG 1 - %d taille\n", mem -> valeur -> tailleBloc);
+			libereMem(mem);
+			break;
+		}
+		mem = mem -> suivant;
+		i++;
+	}
+
 	return mem;
 }
 

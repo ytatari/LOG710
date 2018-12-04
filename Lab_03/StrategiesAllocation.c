@@ -25,7 +25,7 @@
  *			
  *		
  ***************************************************************/
-int main(){
+int main() {
 
 	// Initialise la memoire
 	noeud *origine = initMem(80);
@@ -43,13 +43,26 @@ int main(){
 	printf("firstFit(10): %d\n", ff1);
 	int ff2 = firstFit(origine, 5);
 	printf("firstFit(5): %d\n", ff2);
+	int ff3 = firstFit(origine, 1000);
+	printf("firstFit(1000): %d\n", ff3);
+	int ff4 = firstFit(origine, 5);
+	printf("firstFit(5): %d\n", ff4);
 
 	origine = premierNoeud(origine);
 	afficher_etat(origine);
 	afficher_param(origine);
 
+	// On efface le bloc de 5 à la position 2
+	printf("\n- - - Libere le bloc #2 de 5 - - -\n\n");
+	origine = libereNoeudIndex(origine, 1);
+	origine = premierNoeud(origine);
+	afficher_etat(origine);
+	afficher_param(origine);
+
 	// Test de BestFit
-	bestFit(origine, 128);
+	printf("\n- - - Test de BestFit - - -\n\n0 = OK\n-1 = ERREUR\n\n");
+	int bf1 = bestFit(origine, 5);
+	printf("bestFit(5): %d\n", bf1);
 
 	// Test de WorstFit
 	worstFit(origine, 128);
@@ -63,8 +76,8 @@ int main(){
 /***************************************************************
  *	Titre:			FIRST FIT 		
  *
- *	Description:	
- *			
+ *	Description:	Prend le premier bloc non-alloué
+ *			disponible et le fractionne
  *		
  ***************************************************************/
 int firstFit(noeud *mem, int taille){
@@ -93,8 +106,10 @@ int firstFit(noeud *mem, int taille){
  *			
  *		
  ***************************************************************/
-int bestFit(noeud *memOrigine, int taille){
-	return SUCCES;
+int bestFit(noeud *mem, int taille) {
+
+
+	return ECHEC;
 }
 
 /***************************************************************
@@ -104,7 +119,7 @@ int bestFit(noeud *memOrigine, int taille){
  *			
  *		
  ***************************************************************/
-int worstFit(noeud *memOrigine, int taille){
+int worstFit(noeud *mem, int taille){
 	return SUCCES;
 }
 

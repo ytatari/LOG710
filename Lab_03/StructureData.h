@@ -97,6 +97,16 @@ noeud *allouMem(int taille, noeud *mem);
 noeud *libereMem(noeud *pBloc);
 
 /***************************************************************	 		
+ *	Description:	Donne le premier noeud de la chaine			
+ ***************************************************************/
+noeud *premierNoeud(noeud *mem);
+
+/***************************************************************	 		
+ *	Description:	Libere un bloc de la chaine à un index			
+ ***************************************************************/
+noeud *libereNoeudIndex(noeud *memOrigine, int index);
+
+/***************************************************************	 		
  *	Description:	Retourne le nombre de blocs de memoire libre		
  ***************************************************************/
 int nBlocLibres(noeud *memOrigine);
