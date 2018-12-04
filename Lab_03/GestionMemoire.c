@@ -346,16 +346,16 @@ int mem_est_alloue(noeud *memOrigine) {
 void afficher_etat(noeud *mem) {
 	mem = premierNoeud(mem);
 
-	printf("\n\n********************************\n");
-	printf("Voici l'état des blocs mémoire:\n\n");
+	printf("\n\n ********************************\n");
+	printf(" Voici l'état des blocs mémoire:\n\n");
 
 	int i = 1;
 
 	while (mem != NULL) {
-		printf("Bloc #%d:\n", i);
-		printf("État:\t\t%d\n", mem -> valeur -> etatBloc);
-		printf("Taille:\t\t%d\n", mem -> valeur -> tailleBloc);
-		printf("Adresse:\t%d\n\n", mem -> valeur -> adresseBloc);
+		printf(" Bloc #%d:\n", i);
+		printf(" - État:\t%d\n", mem -> valeur -> etatBloc);
+		printf(" - Taille:\t%d\n", mem -> valeur -> tailleBloc);
+		printf(" - Adresse:\t%d\n\n", mem -> valeur -> adresseBloc);
 		mem = mem -> suivant;
 		i++;
 	}
@@ -371,12 +371,12 @@ void afficher_etat(noeud *mem) {
 void afficher_param(noeud *mem) {
 	mem = premierNoeud(mem);
 
-	printf("\n\n********************************\n");
-	printf("Voici les paramètres mémoire:\n\n");
-	printf("Blocs libres :\t%d\n", nBlocLibres(mem));
-	printf("Blocs alloués :\t%d\n", nBlocAlloues(mem));
-	printf("Mémoire libre :\t%d\n", memLibre(mem));
-	printf("Taille max :\t%d\n\n", mem_pGrand_libre(mem));
+	printf("\n\n ********************************\n");
+	printf(" Voici les paramètres mémoire:\n\n");
+	printf(" Blocs libres :\t\t%d\n", nBlocLibres(mem));
+	printf(" Blocs alloués :\t%d\n", nBlocAlloues(mem));
+	printf(" Mémoire libre :\t%d\n", memLibre(mem));
+	printf(" Taille max :\t\t%d\n\n", mem_pGrand_libre(mem));
 
 }
 
