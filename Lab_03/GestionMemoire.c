@@ -36,7 +36,7 @@ noeud *initMem(int taille){
 	bloc -> adresseBloc = malloc(taille);
 	
 	//Démarre l'initialisation du noeud
-	initNoeud(bloc);
+	return initNoeud(bloc);
 }
 
 /***************************************************************
@@ -61,35 +61,40 @@ noeud *initNoeud(memBloc *bloc){
 /***************************************************************
  *	Titre:			ALLOUER MEMOIRE 		
  *
- *	Description:	Alloue un nouveau bloc memoire	
+ *	Description:	Alloue un nouveau bloc memoire sur le noeud
  *				
  ***************************************************************/
 noeud *allouMem(int taille, noeud *mem){
 
-	//Condition de verification ?
+	// Condition de verification
+	if((mem -> valeur -> etatBloc) == 0 && (mem -> valeur -> tailleBloc) >= taille) {
 
-	//Creation d'un nouveau bloc d'espace memoire
-    memBloc *bloc = malloc(sizeof(memBloc));
+		// Creation d'un nouveau bloc d'espace memoire
+		memBloc *bloc = malloc(sizeof(memBloc));
 
-    //Initialise les parametres du nouveau bloc
-    bloc -> etatBloc 	= 1;
-    bloc -> tailleBloc 	= taille;
-    bloc -> adresseBloc = mem -> valeur -> adresseBloc;
+		// Initialise les parametres du nouveau bloc
+		bloc -> etatBloc 	= 1;
+		bloc -> tailleBloc 	= taille;
+		bloc -> adresseBloc = mem -> valeur -> adresseBloc;
 
-    mem -> valeur -> adresseBloc += taille;
-    mem -> valeur -> tailleBloc  -= taille;
+		mem -> valeur -> adresseBloc += taille;
+		mem -> valeur -> tailleBloc  -= taille;
 
-	//Allocation d'un nouvel space memoire du noeud
-  	noeud *noeud = malloc(sizeof(noeud));
-  	
-  	//Initialise les parametres du nouveau noeud
-  	noeud -> valeur 	= bloc;
-  	noeud -> precedent  = mem -> precedent;
-  	noeud -> suivant    = mem;
+		// Allocation d'un nouvel space memoire du noeud
+	  	noeud *noeud = malloc(sizeof(noeud));
+	  	
+	  	// Initialise les parametres du nouveau noeud
+	  	noeud -> valeur 	= bloc;
+	  	noeud -> precedent  	= mem -> precedent;
+	  	noeud -> suivant    	= mem;
 
-  	mem -> precedent = noeud;
+	  	mem -> precedent = noeud;
 
-  	return noeud;
+	  	return noeud;
+
+	} else {
+		return mem;
+	}
 }
 
 /***************************************************************
@@ -133,6 +138,19 @@ noeud *libereMem(noeud *bloc){
 		free(blocSuivant);
 	}
 	return bloc;
+}
+
+/***************************************************************
+ *	Titre:			PREMIER NOEUD DE LA CHAINE		
+ *
+ *	Description:	Retourne le premier noeud de la chaine
+ *				
+ ***************************************************************/
+noeud *premierNoeud(noeud *mem) {
+	while(mem -> precedent != NULL) {
+		mem = mem -> precedent;
+	}
+	return mem;
 }
 
 /***************************************************************
@@ -264,7 +282,17 @@ void afficher_etat(noeud *memOrigine) {
 	printf("\n\n********************************\n");
 	printf("Voici l'état des blocs mémoire:\n\n");
 
-	// À continuer
+	noeud *mem = memOrigine;
+	int i = 1;
+
+	while (mem != NULL) {
+		printf("Bloc #%d:\n", i);
+		printf("État:\t\t%d\n", mem -> valeur -> etatBloc);
+		printf("Taille:\t\t%d\n", mem -> valeur -> tailleBloc);
+		printf("Adresse:\t%d\n\n", mem -> valeur -> adresseBloc);
+		mem = mem -> suivant;
+		i++;
+	}
 }
 
 /***************************************************************
@@ -277,7 +305,11 @@ void afficher_etat(noeud *memOrigine) {
 void afficher_param(noeud *memOrigine) {
 
 	printf("\n\n********************************\n");
-	printf("Voici les parametres mémoire:\n\n");
+	printf("Voici les paramètres mémoire:\n\n");
+	printf("Blocs libres :\t%d\n", nBlocLibres(memOrigine));
+	printf("Blocs alloués :\t%d\n", nBlocAlloues(memOrigine));
+	printf("Mémoire libre :\t%d\n", memLibre(memOrigine));
+	printf("Taille max :\t%d\n\n", mem_pGrand_libre(memOrigine));
 
-	// À continuer
 }
+
