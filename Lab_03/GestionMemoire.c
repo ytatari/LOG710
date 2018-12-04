@@ -77,24 +77,29 @@ noeud *allouMem(int taille, noeud *mem){
 		bloc -> tailleBloc 	= taille;
 		bloc -> adresseBloc = mem -> valeur -> adresseBloc;
 
-		mem -> valeur -> adresseBloc += taille;
-		mem -> valeur -> tailleBloc  -= taille;
-
 		// Allocation d'un nouvel space memoire du noeud
-	  	noeud *noeud = malloc(sizeof(noeud));
-	  	
-	  	// Initialise les parametres du nouveau noeud
-	  	noeud -> valeur 	= bloc;
+		noeud *noeud = malloc(sizeof(noeud));
+		noeud -> valeur = bloc;
+
+		// Le nouveau noeud est placé devant le noeud actuel non-alloué
 	  	noeud -> precedent  	= mem -> precedent;
 	  	noeud -> suivant    	= mem;
+	  	mem -> precedent 	= noeud;
+		
+		// Changement des valeurs du bloc non-alloué
+		mem -> valeur -> adresseBloc += taille;
+		mem -> valeur -> tailleBloc  -= taille;
+		
+		// Vérifie s'il faut détruire le bloc non-alloué
+		if(mem -> valeur -> tailleBloc == 0) {
+			noeud -> suivant = NULL;
 
-	  	mem -> precedent = noeud;
-
-	  	return noeud;
-
-	} else {
-		return mem;
+			free(mem);
+			return noeud;
+		}
 	}
+
+	return mem;
 }
 
 /***************************************************************

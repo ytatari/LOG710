@@ -72,6 +72,7 @@ int firstFit(noeud *mem, int taille){
 	mem = premierNoeud(mem);
 
 	while(mem != NULL){
+		printf("DEBUG 1 - %d etat - %d taille\n", mem -> valeur -> etatBloc, mem -> valeur -> tailleBloc);
 		// Vérifie si le bloc memoire est à son point initial
 		// et que la taille est suffisante
 		if((mem -> valeur -> etatBloc) == 0 && (mem -> valeur -> tailleBloc) >= taille){
