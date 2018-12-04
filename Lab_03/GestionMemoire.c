@@ -225,16 +225,16 @@ int nBlocs(noeud *memOrigine) {
  *	Description:	Retourne le nombre de blocs de memoire libre
  *				
  ***************************************************************/
-int nBlocLibres(noeud *memOrigine){
+int nBlocLibres(noeud *memOrigine) {
 
 	int nBlocs = 0;
 	noeud *mem = memOrigine;
 
-	while(mem != NULL){
-		
-		//
+	while(mem != NULL) {
+		// Si le bloc est libre
 		if(mem -> valeur -> etatBloc == 0) 
 			nBlocs += 1;
+
 		mem = mem -> suivant;
 	}
 	return nBlocs;
@@ -246,16 +246,16 @@ int nBlocLibres(noeud *memOrigine){
  *	Description:	Retourne le nombre de blocs alloues presentement
  *				
  ***************************************************************/
-int nBlocAlloues(noeud *memOrigine){
+int nBlocAlloues(noeud *memOrigine) {
 
 	int nBlocAll = 0;
 	noeud *mem = memOrigine;
 
-	while(mem != NULL){
-
-		//
+	while(mem != NULL) {
+		// Si le bloc est alloué
 		if(mem -> valeur -> etatBloc == 1)
 			nBlocAll += 1;
+
 		mem = mem -> suivant;
 	}
 	return nBlocAll;
@@ -268,7 +268,7 @@ int nBlocAlloues(noeud *memOrigine){
  *					libre (non alloué) 
  *				
  ***************************************************************/
-int memLibre(noeud *memOrigine){
+int memLibre(noeud *memOrigine) {
 
 	int mLib = 0;
 	noeud *mem = memOrigine;
@@ -312,14 +312,23 @@ int mem_pGrand_libre(noeud *memOrigine) {
  *	Titre:			NOMBRE PETITS BLOCS LIBRE 		
  *
  *	Description:	Retourne le nombre de petit blocs non alloués
- *					(plus petit que taille maxTaillePetit)
+ *			(plus petit que taille maxTaillePetit)
  *					
  ***************************************************************/
-int mem_small_free(noeud *memOrigine) {
+int mem_small_free(noeud *memOrigine, int maxTaillePetit) {
 
-	int maxTaillePetit = 0;
+	int nBlocs = 0;
+	noeud *mem = memOrigine;
 
-	// À continuer
+	while(mem != NULL) {
+		// Si le bloc est libre et plus petit
+		// que maxTaillePetit
+		if(mem -> valeur -> etatBloc == 0 && mem -> valeur -> tailleBloc < maxTaillePetit) 
+			nBlocs++;
+
+		mem = mem -> suivant;
+	}
+	return nBlocs;
 }
 
 /***************************************************************
@@ -371,12 +380,16 @@ void afficher_etat(noeud *mem) {
 void afficher_param(noeud *mem) {
 	mem = premierNoeud(mem);
 
+	int pGrand_libre = mem_pGrand_libre(mem);
+
 	printf("\n\n ********************************\n");
 	printf(" Voici les paramètres mémoire:\n\n");
 	printf(" Blocs libres :\t\t%d\n", nBlocLibres(mem));
 	printf(" Blocs alloués :\t%d\n", nBlocAlloues(mem));
 	printf(" Mémoire libre :\t%d\n", memLibre(mem));
-	printf(" Taille max :\t\t%d\n\n", mem_pGrand_libre(mem));
+	printf(" Taille max :\t\t%d\n\n", pGrand_libre);
+	printf(" Nb. bloc < %d :\t\t%d\n\n", pGrand_libre, mem_small_free(mem, pGrand_libre));
+
 
 }
 

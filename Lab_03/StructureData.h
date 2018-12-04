@@ -134,7 +134,7 @@ int mem_pGrand_libre(noeud *memOrigine);
 /***************************************************************	 		
  *	Description:	Retourne le nombre de petit blocs non alloués		
  ***************************************************************/
-int mem_small_free(noeud *memOrigine);
+int mem_small_free(noeud *memOrigine, int maxTaillePetit);
 
 /***************************************************************	 		
  *	Description:	Retourne un octet en particulier alloué		
