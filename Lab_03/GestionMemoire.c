@@ -338,11 +338,21 @@ int mem_small_free(noeud *memOrigine, int maxTaillePetit) {
  *			
  *		
  ***************************************************************/
-int mem_est_alloue(noeud *memOrigine) {
+int mem_est_alloue(noeud *memOrigine, int pOctet) {
 
-	int pOctet = 0;
+	noeud *mem = memOrigine;
 
-	// À continuer
+	while(mem != NULL) {
+		int begin = mem -> valeur -> adresseBloc;
+		int end = begin + (mem -> valeur -> tailleBloc);
+
+		if(pOctet >= begin && pOctet <= end)
+			return TRUE;
+
+		mem = mem -> suivant;
+	}
+
+	return FALSE;
 }
 
 /***************************************************************

@@ -20,6 +20,9 @@
 #define SUCCES 0
 #define ECHEC -1
 
+#define TRUE 1
+#define FALSE 0
+
 
 /***************************************************************	 		
  *	Description:		Structure qui garde en memoire
@@ -139,7 +142,7 @@ int mem_small_free(noeud *memOrigine, int maxTaillePetit);
 /***************************************************************	 		
  *	Description:	Retourne un octet en particulier alloué		
  ***************************************************************/
-int mem_est_alloue(noeud *memOrigine);
+int mem_est_alloue(noeud *memOrigine, int pOctet);
 
 /***************************************************************	 		
  *	Description:	Permet d'afficher l'état de la mémoire	
