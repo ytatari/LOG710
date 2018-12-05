@@ -27,6 +27,8 @@
  ***************************************************************/
 noeud *initMem(int taille){
 
+	//printf("\n***************** Init Memoire \n");
+
 	//Creation d'un bloc d'espace memoire
 	memBloc *bloc = malloc(sizeof(memBloc));
 
@@ -65,6 +67,8 @@ noeud *initNoeud(memBloc *bloc){
  *				
  ***************************************************************/
 noeud *allouMem(int taille, noeud *mem){
+
+	//printf("\n***************** Alloue Memoire \n\n");
 
 	// Condition de vérification
 	if((mem -> valeur -> etatBloc) == 0 && (mem -> valeur -> tailleBloc) >= taille) {
@@ -121,6 +125,9 @@ noeud *allouMem(int taille, noeud *mem){
  *		
  ***************************************************************/
 noeud *libereMem(noeud *mem) {
+
+	//printf("\n***************** Libere Memoire \n\n");
+
 	// L'état du bloc est maintenant libre
 	mem -> valeur -> etatBloc = 0;
 
@@ -172,6 +179,9 @@ noeud *libereMem(noeud *mem) {
  *				
  ***************************************************************/
 noeud *premierNoeud(noeud *mem) {
+
+	//printf("\n***************** Retourne au premier noeud \n\n");
+
 	while(mem -> precedent != NULL) {
 		mem = mem -> precedent;
 	}
@@ -185,6 +195,9 @@ noeud *premierNoeud(noeud *mem) {
  *				
  ***************************************************************/
 noeud *libereNoeudIndex(noeud *memOrigine, int index) {
+	
+	//printf("\n***************** Libere Noeud Index \n\n");
+
 	int i = 0;
 
 	noeud *mem = memOrigine;
@@ -208,6 +221,9 @@ noeud *libereNoeudIndex(noeud *memOrigine, int index) {
  *				
  ***************************************************************/
 noeud *noeudIndex(noeud *memOrigine, int index) {
+	
+	//printf("\n***************** Noeud Index \n\n");
+
 	int i = 0;
 
 	noeud *mem = memOrigine;
@@ -232,6 +248,8 @@ noeud *noeudIndex(noeud *memOrigine, int index) {
  ***************************************************************/
 int nBlocs(noeud *memOrigine) {
 
+	//printf("\n***************** nBlocs \n\n");
+
 	int nBlocs = 0;
 	noeud *mem = memOrigine;
 
@@ -249,6 +267,8 @@ int nBlocs(noeud *memOrigine) {
  *				
  ***************************************************************/
 int nBlocLibres(noeud *memOrigine) {
+
+	//printf("\n***************** nBlocLibres \n\n");
 
 	int nBlocs = 0;
 	noeud *mem = memOrigine;
@@ -270,6 +290,8 @@ int nBlocLibres(noeud *memOrigine) {
  *				
  ***************************************************************/
 int nBlocAlloues(noeud *memOrigine) {
+
+	//printf("\n***************** Nb Blocs Alloués \n\n");
 
 	int nBlocAll = 0;
 	noeud *mem = memOrigine;
@@ -293,6 +315,8 @@ int nBlocAlloues(noeud *memOrigine) {
  ***************************************************************/
 int memLibre(noeud *memOrigine) {
 
+	//printf("\n***************** Libere Memoire \n\n");
+
 	int mLib = 0;
 	noeud *mem = memOrigine;
 
@@ -313,6 +337,8 @@ int memLibre(noeud *memOrigine) {
  *			
  ***************************************************************/
 int mem_pGrand_libre(noeud *memOrigine) {
+
+	//printf("\n***************** Memoire plus Grand libre \n\n");
 
     int tGraBloc = 0;
     noeud *mem = memOrigine;
@@ -340,6 +366,8 @@ int mem_pGrand_libre(noeud *memOrigine) {
  ***************************************************************/
 int mem_small_free(noeud *memOrigine, int maxTaillePetit) {
 
+	//printf("\n***************** Memoire Small libre \n\n");
+
 	int nBlocs = 0;
 	noeud *mem = memOrigine;
 
@@ -362,6 +390,8 @@ int mem_small_free(noeud *memOrigine, int maxTaillePetit) {
  *		
  ***************************************************************/
 int mem_est_alloue(noeud *memOrigine, int pOctet) {
+
+	//printf("\n***************** Memoire est allouée \n\n");
 
 	noeud *mem = memOrigine;
 
@@ -388,8 +418,7 @@ int mem_est_alloue(noeud *memOrigine, int pOctet) {
 void afficher_etat(noeud *mem) {
 	mem = premierNoeud(mem);
 
-	printf("\n\n ********************************\n");
-	printf(" Voici l'état des blocs mémoire:\n\n");
+	printf("\n\n***Etat bloc memoire\n\n");
 
 	int i = 1;
 
@@ -415,8 +444,8 @@ void afficher_param(noeud *mem) {
 
 	int pGrand_libre = mem_pGrand_libre(mem);
 
-	printf("\n\n ********************************\n");
-	printf(" Voici les paramètres mémoire:\n\n");
+	printf("\n\n***Parametre bloc memoire\n\n");
+
 	printf(" Blocs libres :\t\t%d\n", nBlocLibres(mem));
 	printf(" Blocs alloués :\t%d\n", nBlocAlloues(mem));
 	printf(" Mémoire libre :\t%d\n", memLibre(mem));

@@ -33,10 +33,13 @@ int main() {
 	// Affiche l'état du bloc mémoire à l'origine
 	afficher_etat(mem);
 	// Affiche les fonctions de base des noeuds
-	afficher_param(mem);
+	//afficher_param(mem);
 
 	// Test de FirstFit
-	printf("\n - - - Test de FirstFit - - -\n\n0 = OK\n-1 = ERREUR\n\n");
+	printf("\n\n\n *********************************************\n");
+	printf(" 	       FIRST FIT\n");
+	printf("\n *********************************************\n\n");
+	printf("\n\n0 = OK\n-1 = ERREUR\n\n");
 
 	int ff1 = firstFit(mem, 10);
 	printf(" - firstFit(10): %d\n", ff1);
@@ -48,18 +51,21 @@ int main() {
 	printf(" - firstFit(5): %d\n", ff4);
 
 	afficher_etat(mem);
-	afficher_param(mem);
+	//afficher_param(mem);
 
 	// On efface le bloc de 5 à la position 2
-	printf("\n - - - Libere le bloc #2 de 5 - - -\n\n");
+	printf("\n - - - Libere le bloc #2 de 5 de taille - - -\n\n");
 	mem = premierNoeud(mem);
 	mem = libereNoeudIndex(mem, 1);
 
 	afficher_etat(mem);
-	afficher_param(mem);
+	//afficher_param(mem);
 
 	// Test de BestFit
-	printf("\n - - - Test de BestFit - - -\n\n0 = OK\n-1 = ERREUR\n\n");
+	printf("\n\n\n *********************************************\n");
+	printf(" 	       BEST FIT\n");
+	printf("\n *********************************************\n\n");
+	printf("\n\n0 = OK\n-1 = ERREUR\n\n");
 	int bf1 = bestFit(mem, 10);
 	printf(" - bestFit(10): %d\n", bf1);
 	int bf2 = bestFit(mem, 5);
@@ -70,7 +76,7 @@ int main() {
 	printf(" - bestFit(25): %d\n", bf4);
 
 	afficher_etat(mem);
-	afficher_param(mem);
+	//afficher_param(mem);
 
 	// On efface le bloc de 5 à la position 2
 	printf("\n - - - Libere le bloc #2 et #3 de 5 (deviens 1 bloc libre de 10) - - -\n\n");
@@ -80,20 +86,26 @@ int main() {
 	mem = libereNoeudIndex(mem, 2);
 
 	afficher_etat(mem);
-	afficher_param(mem);
+	//afficher_param(mem);
 
 	// Test de WorstFit
-	printf("\n - - - Test de WorstFit - - -\n\n0 = OK\n-1 = ERREUR\n\n");
+	printf("\n\n\n *********************************************\n");
+	printf(" 	       WORST FIT\n");
+	printf("\n *********************************************\n\n");
+	printf("\n\n0 = OK\n-1 = ERREUR\n\n");
 	int wf1 = worstFit(mem, 10);
 	printf(" - worstFit(10): %d\n", wf1);
 	int wf2 = worstFit(mem, 5);
 	printf(" - worstFit(5): %d\n", wf2);
 
 	afficher_etat(mem);
-	afficher_param(mem);
+	//afficher_param(mem);
 
 	// Test de NextFit
-	printf("\n - - - Test de NextFit - - -\n\n0 = OK\n-1 = ERREUR\n\n");
+	printf("\n\n\n *********************************************\n");
+	printf(" 	       NEXT FIT\n");
+	printf("\n *********************************************\n\n");
+	printf("\n\n0 = OK\n-1 = ERREUR\n\n");
 	mem = premierNoeud(mem);
 	mem = noeudIndex(mem, 3);
 	printf(" - mem: Bloc #4\n");
@@ -107,7 +119,7 @@ int main() {
 	printf(" - nextFit(5): %d\n", nf3);
 
 	afficher_etat(mem);
-	afficher_param(mem);
+	//afficher_param(mem);
 
 	// Test de mem_est_alloue
 	printf("\n - - - Test de mem_est_alloue - - -\n\n1 = OUI\n0 = NON\n\n");
